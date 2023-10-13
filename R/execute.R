@@ -66,6 +66,7 @@ command_shell_prep <- function(expr, temp_file) {
 #' )
 #' }
 #'
+#' @export
 run <- function(func, image = paste0("r-base:", r_version()), debug = FALSE) {
   temp_dir <- tempdir()
   temp_file <- tempfile(tmpdir = temp_dir, fileext = ".RDS")
