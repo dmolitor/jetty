@@ -1,7 +1,7 @@
 # Random stuff
 .DS_Store
 .Rprofile
-
+renv/
 
 # History files
 .Rhistory
