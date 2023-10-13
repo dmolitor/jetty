@@ -1,3 +1,8 @@
+# Random stuff
+.DS_Store
+.Rprofile
+
+
 # History files
 .Rhistory
 .Rapp.history
