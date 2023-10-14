@@ -17,10 +17,14 @@ command_shell_prep <- function(expr, temp_file) {
 
 #' Run a Docker command
 #'
-#' @param args A single argument or vector of arguments to pass to [system2()].
+#' Execute a function or expression within the context of a Docker container
+#' and return the results to the local R session.
+#'
+#' @param args A single argument or vector of arguments to pass
+#'   to \code{\link[=system2]{system2()}}
 #' @examples
 #' \dontrun{
-#'   docker_command(c("info", "--format '{{json .}}'")
+#' docker_info <- docker_command(c("info", "--format '{{json .}}'")
 #' }
 #' @return The output of the given command as a string.
 #' @export
@@ -44,15 +48,18 @@ docker_command <- function(args) {
 
 #' Execute an R expression inside a Docker container
 #'
-#' This function is somewhat similar to [callr::r()] in that the user can pass
-#' a function (or really any expression) to be evaluated. This expression will
+#' This function is somewhat similar in spirit to
+#' \code{\link[callr:r]{callr::r()}} in that the user can pass
+#' a function (or an expression) to be evaluated. This expression will
 #' be executed within the context of a Docker container and the result will be
-#' returned within the local R session. While the results will be returned,
-#' most side effects, e.g. printing and plotting, will be lost since these are
-#' being screamed into the void of the Docker container. However, the local file
-#' system and [tempdir()] are mounted to the Docker container, so any side
-#' effects that involve writing to the home directory or the temp directory will
-#' work as expected!
+#' returned within the local R session.
+#'
+#' It is important to note that most side effects, e.g. printing and plotting,
+#' will be lost since these are being screamed into the void of the Docker
+#' container. However, the local file system `path.expand("~")` and
+#' \code{\link[=tempdir]{tempdir()}} are mounted to the Docker container, so
+#' any side effects that involve writing to the local file system or the
+#' temp directory will work as expected.
 #'
 #' @param func Function object or expression to be executed in the R session
 #'   within the Docker container. Package functions should be referenced using
@@ -60,7 +67,7 @@ docker_command <- function(args) {
 #'   accessible.
 #' @param image A string in the `image:tag` format specifying either a local
 #'   Docker image or an image available on DockerHub. Default image is
-#'   `r-base:your-r-version` where your R version is determined from your local
+#'   `r-base:your.r.version` where your R version is determined from your local
 #'   R session.
 #' @param debug A logical indicating whether to print out the commands that are
 #'   being executed via the shell. This is mostly helpful to see what is
