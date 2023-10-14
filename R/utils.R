@@ -46,7 +46,8 @@ stop_if_not_installed <- function() {
       c(
         "Docker is not installed.",
         "i" = "Visit https://docs.docker.com/get-docker/ to get started!"
-      )
+      ),
+      call = parent.frame()
     )
   }
 }
