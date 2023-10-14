@@ -1,10 +1,10 @@
-# pod
- Execute R expressions within the context of a Docker container.
+# jetty
+Execute R expressions within the context of a Docker container.
 
 ## Install
 ```r
 # install.packages("remotes")
-remotes::install_github("dmolitor/pod")
+remotes::install_github("dmolitor/jetty")
 ```
 
 # Example

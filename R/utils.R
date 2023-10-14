@@ -30,6 +30,15 @@ docker_installed <- function() {
   installed
 }
 
+handle_error <- function(err) {
+  if (inherits(err, "rlang_error")) {
+    print(err, backtrace = FALSE)
+    stop_quietly()
+  }
+  if (inherits(err, "error")) stop(err)
+  invisible(err)
+}
+
 is_windows <- function() {
   if (.Platform$OS.type == "windows") return(TRUE)
   FALSE
@@ -50,4 +59,10 @@ stop_if_not_installed <- function() {
       call = parent.frame()
     )
   }
+}
+
+stop_quietly <- function() {
+  opt <- options(show.error.messages = FALSE)
+  on.exit(options(opt), add = TRUE)
+  stop()
 }

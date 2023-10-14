@@ -3,13 +3,15 @@ command_shell_prep <- function(expr, temp_file) {
   expr <- rlang::expr_text(expr)
   cwd <- getwd()
   expr <- paste0(
-    "\nsetwd(\"",
+    "\ntryCatch({ setwd(\"",
     cwd,
     "\")\npod_output <- ",
     expr,
     "\nsaveRDS(pod_output, file=\"",
     temp_file,
-    "\")"
+    "\") }, error = function(err) { saveRDS(err, file=\"",
+    temp_file,
+    "\"); return(0) })"
   )
   expr <- shQuote(expr)
   expr
@@ -61,6 +63,17 @@ docker_command <- function(args) {
 #' any side effects that involve writing to the local file system or the
 #' temp directory will work as expected.
 #'
+#' @section Error handling:
+#'
+#' \link{jetty} will propagate errors from the Docker process to the main process.
+#' That is, if an error is thrown in the Docker process, an error with the same
+#' message will be thrown in the main process. However, because of the
+#' somewhat isolated nature of the local process and the Docker process,
+#' calling functions such as \code{\link[=traceback]{traceback()}} and
+#' \code{\link[rlang:last_trace]{rlang::last_trace()}} will, unfortunately,
+#' not print the callstack of the uncaught error as that has (in its current
+#' form) been lost in the Docker void.
+#'
 #' @param func Function object or expression to be executed in the R session
 #'   within the Docker container. Package functions should be referenced using
 #'   the `::` notation and only packages installed in the Docker container are
@@ -80,8 +93,8 @@ docker_command <- function(args) {
 #'   {
 #'     mtcars <- mtcars |>
 #'       transform(cyl = as.factor(cyl))
-#'       model <- lm(mpg ~ ., data = mtcars)
-#'       model
+#'     model <- lm(mpg ~ ., data = mtcars)
+#'     model
 #'   }
 #' )
 #' }
@@ -99,5 +112,7 @@ run <- function(func, image = paste0("r-base:", r_version()), debug = FALSE) {
     message(paste0("Executing command:\n", paste0(c("docker", cmd_args), collapse = " ")))
   }
   out <- docker_command(args = cmd_args)
-  readRDS(temp_file)
+  result <- readRDS(temp_file)
+  handle_error(result)
+  result
 }

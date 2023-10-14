@@ -39,14 +39,27 @@ container. However, the local file system `path.expand("~")` and
 any side effects that involve writing to the local file system or the
 temp directory will work as expected.
 }
+\section{Error handling}{
+
+
+\link{jetty} will propagate errors from the Docker process to the main process.
+That is, if an error is thrown in the Docker process, an error with the same
+message will be thrown in the main process. However, because of the
+somewhat isolated nature of the local process and the Docker process,
+calling functions such as \code{\link[=traceback]{traceback()}} and
+\code{\link[rlang:last_trace]{rlang::last_trace()}} will, unfortunately,
+not print the callstack of the uncaught error as that has (in its current
+form) been lost in the Docker void.
+}
+
 \examples{
 \dontrun{
 run(
   {
     mtcars <- mtcars |>
       transform(cyl = as.factor(cyl))
-      model <- lm(mpg ~ ., data = mtcars)
-      model
+    model <- lm(mpg ~ ., data = mtcars)
+    model
   }
 )
 }
