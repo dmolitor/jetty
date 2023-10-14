@@ -10,13 +10,20 @@ attempts to achieve this!
 
 ✅ Call an R function with arguments or a code block in a subprocess 
 within a Docker container
+
 ✅ Copies function arguments (as necessary) to the subprocess and copies the 
 return value of the function/code block
+
 ✅ Copies error objects back from the subprocess.
+
 ❌ Error objects include stack trace.
+
 ✅ Shows the standard output and standard error of the subprocess. 
+
 ❌ Collects the standard output and standard error.
+
 ❌ Call the function/code block asynchronously (in the background)
+
 ❌ Supports persistent R/Docker subprocesses.
 
 ## Install
