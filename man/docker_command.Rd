@@ -14,7 +14,7 @@ to \code{\link[=system2]{system2()}}}
 The output of the given command as a string.
 }
 \description{
-Execute a function or expression within the context of a Docker container
+Execute a function or code block within the context of a Docker container
 and return the results to the local R session.
 }
 \examples{

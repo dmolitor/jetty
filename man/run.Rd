@@ -4,12 +4,12 @@
 \alias{run}
 \title{Execute an R expression inside a Docker container}
 \usage{
-run(func, image = paste0("r-base:", r_version()), debug = FALSE)
+run(func, args = list(), image = paste0("r-base:", r_version()), debug = FALSE)
 }
 \arguments{
-\item{func}{Function object or expression to be executed in the R session
+\item{func}{Function object or code block to be executed in the R session
 within the Docker container. Package functions should be referenced using
-the `::` notation and only packages installed in the Docker container are
+the `::` notation, and only packages installed in the Docker container are
 accessible.}
 
 \item{image}{A string in the `image:tag` format specifying either a local
@@ -27,7 +27,7 @@ Value of the evaluated expression.
 \description{
 This function is somewhat similar in spirit to
 \code{\link[callr:r]{callr::r()}} in that the user can pass
-a function (or an expression) to be evaluated. This expression will
+a function (or a code block) to be evaluated. This code will
 be executed within the context of a Docker container and the result will be
 returned within the local R session.
 }

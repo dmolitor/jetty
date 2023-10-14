@@ -1,25 +1,37 @@
-command_shell_prep <- function(expr, temp_file) {
+command_shell_prep <- function(expr, temp_out, temp_in) {
   expr <- rlang::enexpr(expr)
   expr <- rlang::expr_text(expr)
   cwd <- getwd()
   expr <- paste0(
     "\ntryCatch({ setwd(\"",
     cwd,
-    "\")\npod_output <- ",
+    "\")\njetty_output <- ",
     expr,
-    "\nsaveRDS(pod_output, file=\"",
-    temp_file,
+    "\nif (is.function(jetty_output)) jetty_output <- do.call(jetty_output, args = readRDS(file = \"", temp_in, "\"))",
+    "\nsaveRDS(jetty_output, file=\"",
+    temp_out,
     "\") }, error = function(err) { saveRDS(err, file=\"",
-    temp_file,
+    temp_out,
     "\"); return(0) })"
   )
+  # expr <- paste0(
+  #   "\ntryCatch({ setwd(\"",
+  #   cwd,
+  #   "\")\npod_output <- ",
+  #   expr,
+  #   "\nsaveRDS(pod_output, file=\"",
+  #   temp_file,
+  #   "\") }, error = function(err) { saveRDS(err, file=\"",
+  #   temp_file,
+  #   "\"); return(0) })"
+  # )
   expr <- shQuote(expr)
   expr
 }
 
 #' Run a Docker command
 #'
-#' Execute a function or expression within the context of a Docker container
+#' Execute a function or code block within the context of a Docker container
 #' and return the results to the local R session.
 #'
 #' @param args A single argument or vector of arguments to pass
@@ -52,7 +64,7 @@ docker_command <- function(args) {
 #'
 #' This function is somewhat similar in spirit to
 #' \code{\link[callr:r]{callr::r()}} in that the user can pass
-#' a function (or an expression) to be evaluated. This expression will
+#' a function (or a code block) to be evaluated. This code will
 #' be executed within the context of a Docker container and the result will be
 #' returned within the local R session.
 #'
@@ -74,9 +86,9 @@ docker_command <- function(args) {
 #' not print the callstack of the uncaught error as that has (in its current
 #' form) been lost in the Docker void.
 #'
-#' @param func Function object or expression to be executed in the R session
+#' @param func Function object or code block to be executed in the R session
 #'   within the Docker container. Package functions should be referenced using
-#'   the `::` notation and only packages installed in the Docker container are
+#'   the `::` notation, and only packages installed in the Docker container are
 #'   accessible.
 #' @param image A string in the `image:tag` format specifying either a local
 #'   Docker image or an image available on DockerHub. Default image is
@@ -100,19 +112,29 @@ docker_command <- function(args) {
 #' }
 #'
 #' @export
-run <- function(func, image = paste0("r-base:", r_version()), debug = FALSE) {
+run <- function(func, args = list(), image = paste0("r-base:", r_version()), debug = FALSE) {
+  check_args(args)
   temp_dir <- tempdir()
-  temp_file <- tempfile(tmpdir = temp_dir, fileext = ".RDS")
+  temp_out <- tempfile(tmpdir = temp_dir, fileext = ".RDS")
+  temp_in <- tempfile(tmpdir = temp_dir, fileext = ".RDS")
+  saveRDS(object = args, file = temp_in)
   expr <- rlang::enexpr(func)
-  expr <- command_shell_prep(!!expr, temp_file = temp_file)
+  expr <- command_shell_prep(!!expr, temp_out = temp_out, temp_in = temp_in)
   temp_dir_mount <- bindmount_temp(temp_dir)
   home_dir_mount <- bindmount_home()
-  cmd_args <- c("run", "--rm", home_dir_mount, temp_dir_mount, image, "Rscript", "-e", expr)
-  if (debug) {
-    message(paste0("Executing command:\n", paste0(c("docker", cmd_args), collapse = " ")))
-  }
+  cmd_args <- c(
+    "run",
+    "--rm",
+    home_dir_mount,
+    temp_dir_mount,
+    image,
+    "Rscript",
+    "-e",
+    expr
+  )
+  if (debug) cmd_message(cmd_args)
   out <- docker_command(args = cmd_args)
-  result <- readRDS(temp_file)
+  result <- readRDS(temp_out)
   handle_error(result)
   result
 }

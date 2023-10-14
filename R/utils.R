@@ -11,6 +11,20 @@ bindmount_temp <- function(dir) {
   arg
 }
 
+check_args <- function(args) {
+  if (is.list(args) && !is.data.frame(args)) return(invisible(args))
+  rlang::abort("`args` must be a list")
+}
+
+cmd_message <- function(cmd_args) {
+  message(
+    paste0(
+      "Executing command:\n",
+      paste0(c("docker", cmd_args), collapse = " ")
+    )
+  )
+}
+
 #' Retrieve system Docker information
 #'
 #' @param simplify Logical; Whether to simplify the json structure (e.g.
