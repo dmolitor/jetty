@@ -1,7 +1,7 @@
 Package: pod
 Type: Package
 Title: Execute R in a Docker Context
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Author: Daniel Molitor
 Maintainer: Daniel Molitor <molitdj97@gmail.com>
 Description: Pod allows users to execute functions within the context of a
