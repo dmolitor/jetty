@@ -1,23 +1,9 @@
-bindmount_home <- function() {
-  # TODO: figure out correct Windows volume
-  if (is_windows()) arg <- ""
-  arg <- "-v $(echo $HOME):$(echo $HOME/)"
-  arg
-}
-
-bindmount_temp <- function(dir) {
-  # TODO: figure out correct Windows volume
-  if (is_windows()) arg <- ""
-  arg <- paste0("-v ", dir, ":", dir, "/")
-  arg
-}
-
 command_shell_prep <- function(expr, temp_file) {
   expr <- rlang::enexpr(expr)
   expr <- rlang::expr_text(expr)
   cwd <- getwd()
   expr <- paste0(
-    "setwd(\"",
+    "\nsetwd(\"",
     cwd,
     "\")\npod_output <- ",
     expr,
@@ -27,6 +13,33 @@ command_shell_prep <- function(expr, temp_file) {
   )
   expr <- shQuote(expr)
   expr
+}
+
+#' Run a Docker command
+#'
+#' @param args A single argument or vector of arguments to pass to [system2()].
+#' @examples
+#' \dontrun{
+#'   docker_command(c("info", "--format '{{json .}}'")
+#' }
+#' @return The output of the given command as a string.
+#' @export
+docker_command <- function(args) {
+  stop_if_not_installed()
+  cmd <- suppressWarnings(system2("docker", args = args, stdout = TRUE))
+  status <- attr(cmd, "status")
+  if (length(status) > 0 && status > 0) {
+    cmd <- paste("docker", paste(args, collapse = " "))
+    rlang::abort(
+      class = "docker_cmd_error",
+      message = c(
+        "Docker command exited with non-zero status",
+        "i" = paste0("Status: ", status)
+      ),
+      data = status
+    )
+  }
+  cmd
 }
 
 #' Execute an R expression inside a Docker container
@@ -76,35 +89,8 @@ run <- function(func, image = paste0("r-base:", r_version()), debug = FALSE) {
   home_dir_mount <- bindmount_home()
   cmd_args <- c("run", "--rm", home_dir_mount, temp_dir_mount, image, "Rscript", "-e", expr)
   if (debug) {
-    cat("Command:\n")
-    cat(paste0(c("docker", cmd_args), collapse = " "), "\n")
+    message(paste0("Executing command:\n", paste0(c("docker", cmd_args), collapse = " ")))
   }
   out <- docker_command(args = cmd_args)
   readRDS(temp_file)
 }
-
-
-# complex_fn <- function(a, b, c) {
-#   if (a == 1) print("no!!!")
-#   if (b == 1) print("no!!")
-#   if (c == 1) print("no!")
-#   a + b + c
-# }
-#
-# run(
-#   expr = {
-#     a <- 4
-#     b <- 2
-#     c <- 1
-#
-#     complex_fn <- function(a, b, c) {
-#       cat("I'm working!!!\n")
-#       if (a == 1) a + 1
-#       if (b == 1) b + 1
-#       if (c == 1) c + 1
-#       a + b + c
-#     }
-#
-#     complex_fn(a = a, b = b, c = c)
-#   }
-# )

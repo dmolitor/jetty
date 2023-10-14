@@ -2,5 +2,4 @@
 
 export(docker_command)
 export(docker_info)
-export(docker_installed)
 export(run)
