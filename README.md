@@ -9,7 +9,7 @@ remotes::install_github("dmolitor/jetty")
 
 # Example
 ```r
-library(pod)
+library(jetty)
 
 mtcars_model <- run(
   func = {
