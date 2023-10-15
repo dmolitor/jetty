@@ -22,16 +22,16 @@ package attempts to achieve this!
 
 - [x] Copies error objects back from the subprocess.
 
-- \[\] Error objects include stack trace.
+- [] Error objects include stack trace.
 
 - [x] Shows the standard error and (to some degree) standard output of
   the subprocess.
 
-- \[\] Collects the standard output and standard error.
+- [] Collects the standard output and standard error.
 
-- \[\] Call the function/code block asynchronously (in the background)
+- [] Call the function/code block asynchronously (in the background)
 
-- \[\] Supports persistent R/Docker subprocesses.
+- [] Supports persistent R/Docker subprocesses.
 
 ## Install
 
