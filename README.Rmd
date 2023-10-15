@@ -1,0 +1,155 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+devtools::load_all()
+```
+
+# jetty
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+> Execute R functions or code blocks within a Docker container.
+
+It may be useful, in certain circumstances, to perform a computation in a 
+separate R process that is running within a Docker container. This package
+attempts to achieve this!
+
+## Features
+
+- [x] Call an R function with arguments or a code block in a subprocess 
+within a Docker container
+
+- [x] Copies function arguments (as necessary) to the subprocess and copies the 
+return value of the function/code block
+
+- [x] Copies error objects back from the subprocess.
+
+- [] Error objects include stack trace.
+
+- [x] Shows the standard error and (to some degree) standard output of the subprocess. 
+
+- [] Collects the standard output and standard error.
+
+- [] Call the function/code block asynchronously (in the background)
+
+- [] Supports persistent R/Docker subprocesses.
+
+## Install
+
+```{r, eval=FALSE}
+# install.packages("remotes")
+remotes::install_github("dmolitor/jetty")
+```
+
+## Usage
+
+Use `run()` to execute an R function or code block in a new R process within a
+Docker container. The results are passed back directly to the local R session.
+
+```{r}
+jetty::run(function() summary(cars))
+```
+
+### Specifying Docker container
+
+The desired Docker container can be set via the `image` argument, and should be
+specified as a string in standard Docker format. These formats include
+`username/image:tag`, `usename/image`, `image:tag`, and `image`. The default
+choice is `r-base:{local R version}` which is a bare-bones R image that mirrors
+the R version running locally. For example, the following command would be
+executed in the
+[`rocker/tidyverse`](https://rocker-project.org/images/versioned/rstudio.html)
+image, which comes with the tidyverse (among others) already installed:
+
+```{r, eval=FALSE}
+jetty::run(function() summary(cars), image = "rocker/tidyverse")
+```
+
+### Passing arguments
+
+You can pass arguments to the function by setting `args` to the list of
+arguments, similar to the base `do.call` function.
+
+Note that the function being evaluated in `jetty::run` does not have access to
+variables in the parent process. If the function relies on specific variables,
+they must be passed in via `args`. For example, the following does not work:
+
+```{r, error = TRUE}
+mycars <- cars
+jetty::run(function() summary(mycars))
+```
+
+But this does:
+
+```{r}
+mycars <- cars
+jetty::run(function(x) summary(x), args = list(mycars))
+```
+
+### Using packages
+
+You can use any package in the child R process, with the major caveat that the
+package must be installed in the Docker container. While it's recommended to
+refer to it explicitly with the `::` operator, the code snippet can also call
+`library()` or `require()` and will work fine. For example, the following code
+snippets should be identical:
+
+```{r}
+jetty::run(
+  {
+    library(Matrix);
+    function(nrow, ncol) rsparsematrix(nrow, ncol, density = 1)
+  },
+  args = list(nrow = 10, ncol = 2)
+)
+```
+
+and
+
+```{r}
+jetty::run(
+  function(nrow, ncol) Matrix::rsparsematrix(nrow, ncol, density = 1),
+  args = list(nrow = 10, ncol = 2)
+)
+```
+
+### Error handling
+
+jetty copies errors from the child R process to the main R session:
+
+```{r, error=TRUE}
+jetty::run(function() 1 + "A")
+```
+
+Although the errors themselves are propagated to the main R session, the stack
+trace is (currently) not propagated. This means that calling functions such as
+`traceback()` and `rlang::last_trace()` won't be of any help.
+
+### Standard output and error
+
+This is a little weird at the moment. All messages and warnings currently
+surface, but printed output doesn't show up. Still under construction...
+
+```{r, include=FALSE}
+jetty::run(invisible(for (i in 1:5) message("iter", i, "\n")))
+```
+
+Currently, jetty won't capture the standard error/output and direct it
+anywhere.
+
+## Where it's headed
+
+Maybe nowhere? This is still a relatively rough-shod implementation, and it's
+not totally clear to me what use-case it fills. However, it _feels_ like it
+should be useful somehow.
