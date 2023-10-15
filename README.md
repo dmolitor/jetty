@@ -22,16 +22,16 @@ package attempts to achieve this!
 
 - [x] Copies error objects back from the subprocess.
 
-- [] Error objects include stack trace.
+- [ ] Error objects include stack trace.
 
 - [x] Shows the standard error and (to some degree) standard output of
   the subprocess.
 
-- [] Collects the standard output and standard error.
+- [ ] Collects the standard output and standard error.
 
-- [] Call the function/code block asynchronously (in the background)
+- [ ] Call the function/code block asynchronously (in the background)
 
-- [] Supports persistent R/Docker subprocesses.
+- [ ] Supports persistent R/Docker subprocesses.
 
 ## Install
 
@@ -120,17 +120,17 @@ jetty::run(
 )
 #> Loading required package: Matrix
 #> 10 x 2 sparse Matrix of class "dgCMatrix"
-#>                   
-#>  [1,]  0.69  0.520
-#>  [2,] -1.30  1.700
-#>  [3,] -0.57 -0.140
-#>  [4,]  0.79 -0.047
-#>  [5,] -0.91 -0.370
-#>  [6,] -0.16  1.400
-#>  [7,]  1.00 -0.018
-#>  [8,]  0.19 -0.850
-#>  [9,] -1.80  1.300
-#> [10,]  0.15  1.000
+#>                    
+#>  [1,]  0.650  0.920
+#>  [2,] -0.760 -0.021
+#>  [3,]  0.340 -0.220
+#>  [4,] -1.600 -0.520
+#>  [5,]  1.300 -0.390
+#>  [6,] -1.200 -0.300
+#>  [7,] -0.350  0.190
+#>  [8,]  0.061  1.800
+#>  [9,] -0.310 -0.420
+#> [10,]  0.130  0.800
 ```
 
 and
@@ -141,17 +141,17 @@ jetty::run(
   args = list(nrow = 10, ncol = 2)
 )
 #> 10 x 2 sparse Matrix of class "dgCMatrix"
-#>                    
-#>  [1,] -1.800  0.072
-#>  [2,]  0.260  0.230
-#>  [3,]  0.540  1.600
-#>  [4,] -1.700 -0.450
-#>  [5,] -0.087  0.530
-#>  [6,] -0.340  0.950
-#>  [7,]  0.290  0.540
-#>  [8,] -0.780  1.600
-#>  [9,] -1.500  0.220
-#> [10,]  0.270 -0.580
+#>                  
+#>  [1,] -0.35 -0.47
+#>  [2,]  1.50  0.26
+#>  [3,]  0.50 -0.10
+#>  [4,] -1.50 -0.69
+#>  [5,]  0.33 -1.40
+#>  [6,]  0.58  1.30
+#>  [7,] -0.37  0.36
+#>  [8,]  0.05 -1.60
+#>  [9,] -0.43 -1.00
+#> [10,]  0.95 -0.57
 ```
 
 ### Error handling
