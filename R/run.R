@@ -7,24 +7,15 @@ command_shell_prep <- function(expr, temp_out, temp_in) {
     cwd,
     "\")\njetty_output <- ",
     expr,
-    "\nif (is.function(jetty_output)) jetty_output <- do.call(jetty_output, args = readRDS(file = \"", temp_in, "\"))",
+    "\nif (is.function(jetty_output)) jetty_output <- do.call(jetty_output, args = readRDS(file = \"",
+    temp_in,
+    "\"))",
     "\nsaveRDS(jetty_output, file=\"",
     temp_out,
     "\") }, error = function(err) { saveRDS(err, file=\"",
     temp_out,
     "\"); return(0) })"
   )
-  # expr <- paste0(
-  #   "\ntryCatch({ setwd(\"",
-  #   cwd,
-  #   "\")\npod_output <- ",
-  #   expr,
-  #   "\nsaveRDS(pod_output, file=\"",
-  #   temp_file,
-  #   "\") }, error = function(err) { saveRDS(err, file=\"",
-  #   temp_file,
-  #   "\"); return(0) })"
-  # )
   expr <- shQuote(expr)
   expr
 }
