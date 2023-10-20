@@ -12,6 +12,8 @@ within the Docker container. Package functions should be referenced using
 the `::` notation, and only packages installed in the Docker container are
 accessible.}
 
+\item{args}{Arguments to pass to the function. Must be a list.}
+
 \item{image}{A string in the `image:tag` format specifying either a local
 Docker image or an image available on DockerHub. Default image is
 `r-base:your.r.version` where your R version is determined from your local

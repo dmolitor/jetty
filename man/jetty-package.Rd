@@ -6,6 +6,8 @@
 \alias{jetty-package}
 \title{jetty: Execute R in a Docker Context}
 \description{
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
 Execute functions and expressions within the context of a Docker container and return results to the local R session.
 }
 \keyword{internal}
