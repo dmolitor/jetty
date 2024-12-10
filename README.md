@@ -48,12 +48,12 @@ local R session.
 
 ``` r
 jetty::run(function() var(iris[, 1:4]))
-#>              Sepal.Length Sepal.Width Petal.Length Petal.Width
-#> Sepal.Length    0.6856935  -0.0424340    1.2743154   0.5162707
-#> Sepal.Width    -0.0424340   0.1899794   -0.3296564  -0.1216394
-#> Petal.Length    1.2743154  -0.3296564    3.1162779   1.2956094
-#> Petal.Width     0.5162707  -0.1216394    1.2956094   0.5810063
 ```
+
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="man/figures/README-/unnamed-chunk-3-dark.svg">
+<img src="man/figures/README-/unnamed-chunk-3.svg" width="100%" />
+</picture>
 
 ### Specifying Docker container
 
@@ -84,21 +84,22 @@ mycars <- cars
 jetty::run(function() summary(mycars))
 ```
 
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="man/figures/README-/unnamed-chunk-5-dark.svg">
 <img src="man/figures/README-/unnamed-chunk-5.svg" width="100%" />
+</picture>
 
 But this does:
 
 ``` r
 mycars <- cars
 jetty::run(function(x) summary(x), args = list(mycars))
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
 ```
+
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="man/figures/README-/unnamed-chunk-6-dark.svg">
+<img src="man/figures/README-/unnamed-chunk-6.svg" width="100%" />
+</picture>
 
 ### Using packages
 
@@ -116,20 +117,12 @@ jetty::run(
   },
   args = list(nrow = 10, ncol = 2)
 )
-#> Loading required package: Matrix
-#> 10 x 2 sparse Matrix of class "dgCMatrix"
-#>                  
-#>  [1,] -0.41 -0.39
-#>  [2,] -1.40 -0.18
-#>  [3,] -0.26 -0.70
-#>  [4,] -1.90  0.42
-#>  [5,] -2.30  0.77
-#>  [6,]  0.94  0.96
-#>  [7,]  2.20 -0.19
-#>  [8,] -1.70  0.10
-#>  [9,]  0.30 -0.41
-#> [10,]  1.20  1.20
 ```
+
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="man/figures/README-/unnamed-chunk-7-dark.svg">
+<img src="man/figures/README-/unnamed-chunk-7.svg" width="100%" />
+</picture>
 
 and
 
@@ -138,19 +131,12 @@ jetty::run(
   function(nrow, ncol) Matrix::rsparsematrix(nrow, ncol, density = 1),
   args = list(nrow = 10, ncol = 2)
 )
-#> 10 x 2 sparse Matrix of class "dgCMatrix"
-#>                   
-#>  [1,]  0.21  0.540
-#>  [2,] -0.95  1.400
-#>  [3,] -1.20  0.600
-#>  [4,]  0.11  0.088
-#>  [5,] -0.92  2.000
-#>  [6,] -0.14  0.540
-#>  [7,]  0.31 -1.000
-#>  [8,] -1.10  1.600
-#>  [9,]  0.97 -0.430
-#> [10,]  0.93 -1.100
 ```
+
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="man/figures/README-/unnamed-chunk-8-dark.svg">
+<img src="man/figures/README-/unnamed-chunk-8.svg" width="100%" />
+</picture>
 
 #### Installing required packages
 
@@ -159,50 +145,38 @@ example, the following code will fail because the required packages are
 not installed in the Docker image:
 
 ``` r
-run(
+jetty::run(
   {
-    iris |> 
-      tidyr::pivot_longer(
-        cols = -Species,
-        cols_vary = "slowest",
-        names_to = c(".value", "Measurement"),
-        names_pattern = "(.*)\\.(.*)"
-      ) |>
-      dplyr::mutate(Measurement = as.factor(Measurement)) |>
-      ggplot2::ggplot(mapping = ggplot2::aes(x = Sepal, y = Petal)) +
-      ggplot2::geom_point() +
-      ggplot2::facet_wrap(~ Measurement, scales = "free")
+    my_name <- "Daniel"
+    glue::glue("Hello {my_name}")
   }
 )
 ```
 
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="man/figures/README-/unnamed-chunk-9-dark.svg">
 <img src="man/figures/README-/unnamed-chunk-9.svg" width="100%" />
+</picture>
 
 However, by setting `install_dependencies = TRUE` we can tell jetty to
 discover the required packages and install them before executing the
 code:
 
 ``` r
-run(
+jetty::run(
   {
-    iris |> 
-      tidyr::pivot_longer(
-        cols = -Species,
-        cols_vary = "slowest",
-        names_to = c(".value", "Measurement"),
-        names_pattern = "(.*)\\.(.*)"
-      ) |>
-      dplyr::mutate(Measurement = as.factor(Measurement)) |>
-      ggplot2::ggplot(mapping = ggplot2::aes(x = Sepal, y = Petal)) +
-      ggplot2::geom_point() +
-      ggplot2::facet_wrap(~ Measurement, scales = "free")
+    my_name <- "Daniel"
+    glue::glue("Hello {my_name}")
   },
   install_dependencies = TRUE,
   stdout = TRUE
 )
 ```
 
-<img src="man/figures/README-unnamed-chunk-10-1.png" width="100%" />
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="man/figures/README-/unnamed-chunk-10-dark.svg">
+<img src="man/figures/README-/unnamed-chunk-10.svg" width="100%" />
+</picture>
 
 **Note**: this feature uses
 [`renv::dependencies`](https://rstudio.github.io/renv/reference/dependencies.html)
@@ -219,7 +193,10 @@ jetty copies errors from the child R process to the main R session:
 jetty::run(function() 1 + "A")
 ```
 
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="man/figures/README-/unnamed-chunk-11-dark.svg">
 <img src="man/figures/README-/unnamed-chunk-11.svg" width="100%" />
+</picture>
 
 Although the errors themselves are propagated to the main R session, the
 stack trace is (currently) not propagated. This means that calling
@@ -232,19 +209,27 @@ By default, the standard output and error of the Docker subprocess are
 printed to the R console. However, since jetty uses `system2()` to
 execute all Docker commands, you can specify the `stdout` and `stderr`
 arguments which will be passed directly to `system2()`. For example the
-following code will print a series of messages to the console:
+following code will print a series of text to the console:
 
 ``` r
-jetty::run({for (i in 1:5) message("iter", i, "\n"); TRUE})
-#> [1] TRUE
+jetty::run({for (i in 1:5) cat("iter", i, "\n"); TRUE})
 ```
+
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="man/figures/README-/unnamed-chunk-12-dark.svg">
+<img src="man/figures/README-/unnamed-chunk-12.svg" width="100%" />
+</picture>
 
 But you can discard this output by setting `stdout = FALSE`:
 
 ``` r
-jetty::run({for (i in 1:5) message("iter", i, "\n"); TRUE}, stdout = FALSE)
-#> [1] TRUE
+jetty::run({for (i in 1:5) cat("iter", i, "\n"); TRUE}, stdout = FALSE)
 ```
+
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="man/figures/README-/unnamed-chunk-13-dark.svg">
+<img src="man/figures/README-/unnamed-chunk-13.svg" width="100%" />
+</picture>
 
 To see more details on controlling `stdout` and `stderr`, check out the
 [documentation

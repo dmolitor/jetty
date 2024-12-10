@@ -15,7 +15,8 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.path = "man/figures/README-",
-  out.width = "100%"
+  out.width = "100%",
+  asciicast_theme = if (Sys.getenv("IN_PKGDOWN") == "true") "pkgdown" else "readme"
 )
 asciicast::init_knitr_engine(
   echo = TRUE,
@@ -23,9 +24,9 @@ asciicast::init_knitr_engine(
   startup = quote({
     library(cli)
     options(cli.num_colors = cli::truecolor)
-  })
+  }),
+  timeout = 1000
 )
-devtools::load_all()
 ```
 
 # jetty <img src='man/figures/logo-no-bg.png' align="right" height="139"/>
@@ -69,7 +70,7 @@ pak::pkg_install("dmolitor/jetty")
 Use `run()` to execute an R function or code block in a new R process within a
 Docker container. The results are passed back directly to the local R session.
 
-```{r}
+```{asciicast}
 jetty::run(function() var(iris[, 1:4]))
 ```
 
@@ -100,7 +101,7 @@ jetty::run(function() summary(mycars))
 ```
 
 But this does:
-```{r}
+```{asciicast}
 mycars <- cars
 jetty::run(function(x) summary(x), args = list(mycars))
 ```
@@ -113,7 +114,7 @@ refer to it explicitly with the `::` operator, the code snippet can also call
 `library()` or `require()` and will work fine. For example, the following code
 snippets both work equally well:
 
-```{r}
+```{asciicast}
 jetty::run(
   {
     library(Matrix);
@@ -124,7 +125,7 @@ jetty::run(
 ```
 
 and
-```{r}
+```{asciicast}
 jetty::run(
   function(nrow, ncol) Matrix::rsparsematrix(nrow, ncol, density = 1),
   args = list(nrow = 10, ncol = 2)
@@ -137,39 +138,21 @@ jetty also supports installing required packages at runtime. For example,
 the following code will fail because the required packages are not installed
 in the Docker image:
 ```{asciicast}
-run(
+jetty::run(
   {
-    iris |> 
-      tidyr::pivot_longer(
-        cols = -Species,
-        cols_vary = "slowest",
-        names_to = c(".value", "Measurement"),
-        names_pattern = "(.*)\\.(.*)"
-      ) |>
-      dplyr::mutate(Measurement = as.factor(Measurement)) |>
-      ggplot2::ggplot(mapping = ggplot2::aes(x = Sepal, y = Petal)) +
-      ggplot2::geom_point() +
-      ggplot2::facet_wrap(~ Measurement, scales = "free")
+    my_name <- "Daniel"
+    glue::glue("Hello {my_name}")
   }
 )
 ```
 
 However, by setting `install_dependencies = TRUE` we can tell jetty to discover
 the required packages and install them before executing the code:
-```{r}
-run(
+```{asciicast}
+jetty::run(
   {
-    iris |> 
-      tidyr::pivot_longer(
-        cols = -Species,
-        cols_vary = "slowest",
-        names_to = c(".value", "Measurement"),
-        names_pattern = "(.*)\\.(.*)"
-      ) |>
-      dplyr::mutate(Measurement = as.factor(Measurement)) |>
-      ggplot2::ggplot(mapping = ggplot2::aes(x = Sepal, y = Petal)) +
-      ggplot2::geom_point() +
-      ggplot2::facet_wrap(~ Measurement, scales = "free")
+    my_name <- "Daniel"
+    glue::glue("Hello {my_name}")
   },
   install_dependencies = TRUE,
   stdout = TRUE
@@ -199,14 +182,14 @@ By default, the standard output and error of the Docker subprocess are printed
 to the R console. However, since jetty uses `system2()` to execute all Docker
 commands, you can specify the `stdout` and `stderr` arguments which will
 be passed directly to `system2()`. For example the following code will print
-a series of messages to the console:
-```{r}
-jetty::run({for (i in 1:5) message("iter", i, "\n"); TRUE})
+a series of text to the console:
+```{asciicast}
+jetty::run({for (i in 1:5) cat("iter", i, "\n"); TRUE})
 ```
 
 But you can discard this output by setting `stdout = FALSE`:
-```{r}
-jetty::run({for (i in 1:5) message("iter", i, "\n"); TRUE}, stdout = FALSE)
+```{asciicast}
+jetty::run({for (i in 1:5) cat("iter", i, "\n"); TRUE}, stdout = FALSE)
 ```
 
 To see more details on controlling `stdout` and `stderr`, check out the
