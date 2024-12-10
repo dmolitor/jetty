@@ -1,13 +1,12 @@
 bindmount_home <- function() {
-  # TODO: figure out correct Windows volume
+  # TODO: Determine if this is the drive we want to mount
   home_dir <- path.expand("~")
-  arg <- paste0("-v ", home_dir, ":", home_dir, "/")
+  arg <- paste0("-v ", home_dir, ":", home_dir, "/:rw")
   arg
 }
 
 bindmount_temp <- function(dir) {
-  # TODO: figure out correct Windows volume
-  arg <- paste0("-v ", dir, ":", dir, "/")
+  arg <- paste0("-v ", dir, ":", dir, "/:rw")
   arg
 }
 
@@ -25,37 +24,15 @@ cmd_message <- function(cmd_args) {
   )
 }
 
-#' Retrieve system Docker information
-#'
-#' @param simplify Logical; Whether to simplify the json structure (e.g.
-#'   coerce list of lists elements into a data.frame) or return as one big list.
-#' @return A list containing Docker system information
-#' @export
-docker_info <- function(simplify = TRUE) {
-  stop_if_not_installed()
-  info <- docker_command(c("info", "--format '{{json .}}'"))
-  info <- jsonlite::fromJSON(info, simplifyVector = simplify)
-  info
-}
-
 docker_installed <- function() {
   installed <- Sys.which("docker")
   if (installed == "") installed <- FALSE else installed <- TRUE
   installed
 }
 
-handle_error <- function(err) {
-  if (inherits(err, "rlang_error")) {
-    print(err, backtrace = FALSE)
-    stop_quietly()
-  }
-  if (inherits(err, "error")) stop(err)
-  invisible(err)
-}
-
-is_windows <- function() {
-  if (.Platform$OS.type == "windows") return(TRUE)
-  FALSE
+handle_error <- function(x) {
+  if (inherits(x, "error")) stop(x)
+  invisible(x)
 }
 
 r_version <- function() {
@@ -73,10 +50,4 @@ stop_if_not_installed <- function() {
       call = parent.frame()
     )
   }
-}
-
-stop_quietly <- function() {
-  opt <- options(show.error.messages = FALSE)
-  on.exit(options(opt), add = TRUE)
-  stop()
 }
