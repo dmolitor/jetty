@@ -14,79 +14,77 @@ package attempts to achieve this!
 
 ## Features
 
-- [x] Call an R function with arguments or a code block in a subprocess
-  within a Docker container
+- Calls an R function with arguments or a code block in a subprocess
+  within a Docker container.
 
-- [x] Copies function arguments (as necessary) to the subprocess and
-  copies the return value of the function/code block
+- Copies function arguments (as necessary) to the subprocess and copies
+  the return value of the function/code block.
 
-- [x] Copies error objects back from the subprocess.
+- Discovers and installs required packages in the Docker container at
+  run-time.
 
-- [ ] Error objects include stack trace.
+- Copies error objects back from the subprocess. In general, these error
+  objects do not include the stack trace from the Docker R process.
+  However, if for example the error is an rlang error, it will include
+  the full stack trace.
 
-- [x] Shows the standard error and (to some degree) standard output of
-  the subprocess.
-
-- [ ] Collects the standard output and standard error.
-
-- [ ] Call the function/code block asynchronously (in the background)
-
-- [ ] Supports persistent R/Docker subprocesses.
+- Shows and/or collects the standard output and standard error of the
+  Docker subprocess.
 
 ## Install
 
+To install jetty from GitHub:
+
 ``` r
-# install.packages("remotes")
-remotes::install_github("dmolitor/jetty")
+# install.packages("pak")
+pak::pkg_install("dmolitor/jetty")
 ```
 
-## Usage
+## Synchronous, one-off R processes in a Docker container
 
 Use `run()` to execute an R function or code block in a new R process
 within a Docker container. The results are passed back directly to the
 local R session.
 
 ``` r
-jetty::run(function() summary(cars))
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
+jetty::run(function() var(iris[, 1:4]))
+#>              Sepal.Length Sepal.Width Petal.Length Petal.Width
+#> Sepal.Length    0.6856935  -0.0424340    1.2743154   0.5162707
+#> Sepal.Width    -0.0424340   0.1899794   -0.3296564  -0.1216394
+#> Petal.Length    1.2743154  -0.3296564    3.1162779   1.2956094
+#> Petal.Width     0.5162707  -0.1216394    1.2956094   0.5810063
 ```
 
 ### Specifying Docker container
 
 The desired Docker container can be set via the `image` argument, and
 should be specified as a string in standard Docker format. These formats
-include `username/image:tag`, `usename/image`, `image:tag`, and `image`.
-The default choice is `r-base:{local R version}` which is a bare-bones R
-image that mirrors the R version running locally. For example, the
-following command would be executed in the
-[`rocker/tidyverse`](https://rocker-project.org/images/versioned/rstudio.html)
-image, which comes with the tidyverse (among others) already installed:
+include `username/image:tag`, `username/image`, `image:tag`, and
+`image`. The default choice is `r-base:{jetty:::r_version()}` which is a
+bare-bones R image that mirrors the R version running locally. For
+example, the following command would be executed in the official
+[`r-base`](https://hub.docker.com/_/r-base) image with the latest
+version of R, which comes with no packages beyond the base set
+installed:
 
 ``` r
-jetty::run(function() summary(cars), image = "rocker/tidyverse")
+jetty::run(function() var(iris[, 1:4]), image = "r-base:latest")
 ```
 
 ### Passing arguments
 
 You can pass arguments to the function by setting `args` to the list of
-arguments, similar to the base `do.call` function.
-
-Note that the function being evaluated in `jetty::run` does not have
-access to variables in the parent process. If the function relies on
-specific variables, they must be passed in via `args`. For example, the
+arguments, similar to the base `do.call` function. This is often
+necessary, as the function being evaluated in the Docker R process does
+not have access to variables in the parent process. For example, the
 following does not work:
 
 ``` r
 mycars <- cars
 jetty::run(function() summary(mycars))
-#> Error in (function () : object 'mycars' not found
 ```
+
+<img src="man/figures/README-/unnamed-chunk-5.svg" width="100%" />
 
 But this does:
 
@@ -104,11 +102,11 @@ jetty::run(function(x) summary(x), args = list(mycars))
 
 ### Using packages
 
-You can use any package in the child R process, with the major caveat
-that the package must be installed in the Docker container. While it’s
+You can use any package in the child R process, with the caveat that the
+package must be installed in the Docker container. While it’s
 recommended to refer to it explicitly with the `::` operator, the code
 snippet can also call `library()` or `require()` and will work fine. For
-example, the following code snippets should be identical:
+example, the following code snippets both work equally well:
 
 ``` r
 jetty::run(
@@ -120,17 +118,17 @@ jetty::run(
 )
 #> Loading required package: Matrix
 #> 10 x 2 sparse Matrix of class "dgCMatrix"
-#>                   
-#>  [1,] -0.053 -1.70
-#>  [2,]  0.720 -0.33
-#>  [3,] -1.000 -0.96
-#>  [4,] -2.000  0.60
-#>  [5,] -0.430  0.03
-#>  [6,]  0.260 -0.54
-#>  [7,] -0.690  0.02
-#>  [8,] -1.300 -1.30
-#>  [9,]  0.097  1.10
-#> [10,]  1.600  0.11
+#>                  
+#>  [1,] -0.41 -0.39
+#>  [2,] -1.40 -0.18
+#>  [3,] -0.26 -0.70
+#>  [4,] -1.90  0.42
+#>  [5,] -2.30  0.77
+#>  [6,]  0.94  0.96
+#>  [7,]  2.20 -0.19
+#>  [8,] -1.70  0.10
+#>  [9,]  0.30 -0.41
+#> [10,]  1.20  1.20
 ```
 
 and
@@ -141,18 +139,77 @@ jetty::run(
   args = list(nrow = 10, ncol = 2)
 )
 #> 10 x 2 sparse Matrix of class "dgCMatrix"
-#>                    
-#>  [1,] -0.320 -1.400
-#>  [2,]  0.550  0.600
-#>  [3,] -1.300  0.120
-#>  [4,]  1.100 -0.092
-#>  [5,] -0.310 -0.590
-#>  [6,] -1.800 -0.330
-#>  [7,]  0.270  0.400
-#>  [8,] -1.000 -0.840
-#>  [9,] -1.600 -2.200
-#> [10,]  0.068  0.630
+#>                   
+#>  [1,]  0.21  0.540
+#>  [2,] -0.95  1.400
+#>  [3,] -1.20  0.600
+#>  [4,]  0.11  0.088
+#>  [5,] -0.92  2.000
+#>  [6,] -0.14  0.540
+#>  [7,]  0.31 -1.000
+#>  [8,] -1.10  1.600
+#>  [9,]  0.97 -0.430
+#> [10,]  0.93 -1.100
 ```
+
+#### Installing required packages
+
+jetty also supports installing required packages at runtime. For
+example, the following code will fail because the required packages are
+not installed in the Docker image:
+
+``` r
+run(
+  {
+    iris |> 
+      tidyr::pivot_longer(
+        cols = -Species,
+        cols_vary = "slowest",
+        names_to = c(".value", "Measurement"),
+        names_pattern = "(.*)\\.(.*)"
+      ) |>
+      dplyr::mutate(Measurement = as.factor(Measurement)) |>
+      ggplot2::ggplot(mapping = ggplot2::aes(x = Sepal, y = Petal)) +
+      ggplot2::geom_point() +
+      ggplot2::facet_wrap(~ Measurement, scales = "free")
+  }
+)
+```
+
+<img src="man/figures/README-/unnamed-chunk-9.svg" width="100%" />
+
+However, by setting `install_dependencies = TRUE` we can tell jetty to
+discover the required packages and install them before executing the
+code:
+
+``` r
+run(
+  {
+    iris |> 
+      tidyr::pivot_longer(
+        cols = -Species,
+        cols_vary = "slowest",
+        names_to = c(".value", "Measurement"),
+        names_pattern = "(.*)\\.(.*)"
+      ) |>
+      dplyr::mutate(Measurement = as.factor(Measurement)) |>
+      ggplot2::ggplot(mapping = ggplot2::aes(x = Sepal, y = Petal)) +
+      ggplot2::geom_point() +
+      ggplot2::facet_wrap(~ Measurement, scales = "free")
+  },
+  install_dependencies = TRUE,
+  stdout = TRUE
+)
+```
+
+<img src="man/figures/README-unnamed-chunk-10-1.png" width="100%" />
+
+**Note**: this feature uses
+[`renv::dependencies`](https://rstudio.github.io/renv/reference/dependencies.html)
+to discover the required packages, and won’t handle all possible
+scenarios. In particular, it won’t install specific package versions
+(just the latest version) and it will only install packages that are on
+CRAN. Use this with care!
 
 ### Error handling
 
@@ -160,8 +217,9 @@ jetty copies errors from the child R process to the main R session:
 
 ``` r
 jetty::run(function() 1 + "A")
-#> Error in 1 + "A": non-numeric argument to binary operator
 ```
+
+<img src="man/figures/README-/unnamed-chunk-11.svg" width="100%" />
 
 Although the errors themselves are propagated to the main R session, the
 stack trace is (currently) not propagated. This means that calling
@@ -170,15 +228,24 @@ any help.
 
 ### Standard output and error
 
-This is a little weird at the moment. All messages and warnings
-currently surface, but printed output doesn’t show up. Still under
-construction…
+By default, the standard output and error of the Docker subprocess are
+printed to the R console. However, since jetty uses `system2()` to
+execute all Docker commands, you can specify the `stdout` and `stderr`
+arguments which will be passed directly to `system2()`. For example the
+following code will print a series of messages to the console:
 
-Currently, jetty won’t capture the standard error/output and direct it
-anywhere.
+``` r
+jetty::run({for (i in 1:5) message("iter", i, "\n"); TRUE})
+#> [1] TRUE
+```
 
-## Where it’s headed
+But you can discard this output by setting `stdout = FALSE`:
 
-Maybe nowhere? This is still a relatively rough-shod implementation, and
-it’s not totally clear to me what use-case it fills. However, it *feels*
-like it should be useful somehow.
+``` r
+jetty::run({for (i in 1:5) message("iter", i, "\n"); TRUE}, stdout = FALSE)
+#> [1] TRUE
+```
+
+To see more details on controlling `stdout` and `stderr`, check out the
+[documentation
+here](https://stat.ethz.ch/R-manual/R-devel/library/base/html/system2.html).

@@ -1,5 +1,11 @@
 ---
-output: github_document
+output:
+  github_document:
+    toc: false
+always_allow_html: yes
+editor_options:
+  markdown:
+    wrap: sentence
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -10,6 +16,14 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.path = "man/figures/README-",
   out.width = "100%"
+)
+asciicast::init_knitr_engine(
+  echo = TRUE,
+  echo_input = FALSE,
+  startup = quote({
+    library(cli)
+    options(cli.num_colors = cli::truecolor)
+  })
 )
 devtools::load_all()
 ```
@@ -27,71 +41,65 @@ attempts to achieve this!
 
 ## Features
 
-- [x] Call an R function with arguments or a code block in a subprocess 
-within a Docker container
+- Calls an R function with arguments or a code block in a subprocess 
+within a Docker container.
 
-- [x] Copies function arguments (as necessary) to the subprocess and copies the 
-return value of the function/code block
+- Copies function arguments (as necessary) to the subprocess and copies the 
+return value of the function/code block.
 
-- [x] Copies error objects back from the subprocess.
+- Discovers and installs required packages in the Docker container at run-time.
 
-- [ ] Error objects include stack trace.
+- Copies error objects back from the subprocess. In general, these error objects
+do not include the stack trace from the Docker R process. However, if for example
+the error is an rlang error, it will include the full stack trace.
 
-- [x] Shows the standard error and (to some degree) standard output of the subprocess. 
-
-- [ ] Collects the standard output and standard error.
-
-- [ ] Call the function/code block asynchronously (in the background)
-
-- [ ] Supports persistent R/Docker subprocesses.
+- Shows and/or collects the standard output and standard error of the Docker
+subprocess.
 
 ## Install
 
-```{r, eval=FALSE}
-# install.packages("remotes")
-remotes::install_github("dmolitor/jetty")
+To install jetty from GitHub:
+```{r, eval = FALSE}
+# install.packages("pak")
+pak::pkg_install("dmolitor/jetty")
 ```
 
-## Usage
+## Synchronous, one-off R processes in a Docker container
 
 Use `run()` to execute an R function or code block in a new R process within a
 Docker container. The results are passed back directly to the local R session.
 
 ```{r}
-jetty::run(function() summary(cars))
+jetty::run(function() var(iris[, 1:4]))
 ```
 
 ### Specifying Docker container
 
 The desired Docker container can be set via the `image` argument, and should be
 specified as a string in standard Docker format. These formats include
-`username/image:tag`, `usename/image`, `image:tag`, and `image`. The default
-choice is `r-base:{local R version}` which is a bare-bones R image that mirrors
+`username/image:tag`, `username/image`, `image:tag`, and `image`. The default
+choice is `r-base:{jetty:::r_version()}` which is a bare-bones R image that mirrors
 the R version running locally. For example, the following command would be
-executed in the
-[`rocker/tidyverse`](https://rocker-project.org/images/versioned/rstudio.html)
-image, which comes with the tidyverse (among others) already installed:
+executed in the official [`r-base`](https://hub.docker.com/_/r-base)
+image with the latest version of R, which comes with no packages beyond the
+base set installed:
 
-```{r, eval=FALSE}
-jetty::run(function() summary(cars), image = "rocker/tidyverse")
+```{r, eval = FALSE}
+jetty::run(function() var(iris[, 1:4]), image = "r-base:latest")
 ```
 
 ### Passing arguments
 
 You can pass arguments to the function by setting `args` to the list of
-arguments, similar to the base `do.call` function.
-
-Note that the function being evaluated in `jetty::run` does not have access to
-variables in the parent process. If the function relies on specific variables,
-they must be passed in via `args`. For example, the following does not work:
-
-```{r, error = TRUE}
+arguments, similar to the base `do.call` function. This is often necessary, as
+the function being evaluated in the Docker R process does not have access to
+variables in the parent process. For example, the following does not work:
+```{asciicast}
 mycars <- cars
 jetty::run(function() summary(mycars))
 ```
 
 But this does:
-
 ```{r}
 mycars <- cars
 jetty::run(function(x) summary(x), args = list(mycars))
@@ -99,11 +107,11 @@ jetty::run(function(x) summary(x), args = list(mycars))
 
 ### Using packages
 
-You can use any package in the child R process, with the major caveat that the
+You can use any package in the child R process, with the caveat that the
 package must be installed in the Docker container. While it's recommended to
 refer to it explicitly with the `::` operator, the code snippet can also call
 `library()` or `require()` and will work fine. For example, the following code
-snippets should be identical:
+snippets both work equally well:
 
 ```{r}
 jetty::run(
@@ -116,7 +124,6 @@ jetty::run(
 ```
 
 and
-
 ```{r}
 jetty::run(
   function(nrow, ncol) Matrix::rsparsematrix(nrow, ncol, density = 1),
@@ -124,11 +131,61 @@ jetty::run(
 )
 ```
 
+#### Installing required packages
+
+jetty also supports installing required packages at runtime. For example,
+the following code will fail because the required packages are not installed
+in the Docker image:
+```{asciicast}
+run(
+  {
+    iris |> 
+      tidyr::pivot_longer(
+        cols = -Species,
+        cols_vary = "slowest",
+        names_to = c(".value", "Measurement"),
+        names_pattern = "(.*)\\.(.*)"
+      ) |>
+      dplyr::mutate(Measurement = as.factor(Measurement)) |>
+      ggplot2::ggplot(mapping = ggplot2::aes(x = Sepal, y = Petal)) +
+      ggplot2::geom_point() +
+      ggplot2::facet_wrap(~ Measurement, scales = "free")
+  }
+)
+```
+
+However, by setting `install_dependencies = TRUE` we can tell jetty to discover
+the required packages and install them before executing the code:
+```{r}
+run(
+  {
+    iris |> 
+      tidyr::pivot_longer(
+        cols = -Species,
+        cols_vary = "slowest",
+        names_to = c(".value", "Measurement"),
+        names_pattern = "(.*)\\.(.*)"
+      ) |>
+      dplyr::mutate(Measurement = as.factor(Measurement)) |>
+      ggplot2::ggplot(mapping = ggplot2::aes(x = Sepal, y = Petal)) +
+      ggplot2::geom_point() +
+      ggplot2::facet_wrap(~ Measurement, scales = "free")
+  },
+  install_dependencies = TRUE,
+  stdout = TRUE
+)
+```
+
+**Note**: this feature uses [`renv::dependencies`](https://rstudio.github.io/renv/reference/dependencies.html)
+to discover the required packages, and won't handle all possible scenarios.
+In particular, it won't install specific package versions (just the latest version)
+and it will only install packages that are on CRAN. Use this with care!
+
 ### Error handling
 
 jetty copies errors from the child R process to the main R session:
 
-```{r, error=TRUE}
+```{asciicast}
 jetty::run(function() 1 + "A")
 ```
 
@@ -138,18 +195,20 @@ trace is (currently) not propagated. This means that calling functions such as
 
 ### Standard output and error
 
-This is a little weird at the moment. All messages and warnings currently
-surface, but printed output doesn't show up. Still under construction...
-
-```{r, include=FALSE}
-jetty::run(invisible(for (i in 1:5) message("iter", i, "\n")))
+By default, the standard output and error of the Docker subprocess are printed
+to the R console. However, since jetty uses `system2()` to execute all Docker
+commands, you can specify the `stdout` and `stderr` arguments which will
+be passed directly to `system2()`. For example the following code will print
+a series of messages to the console:
+```{r}
+jetty::run({for (i in 1:5) message("iter", i, "\n"); TRUE})
 ```
 
-Currently, jetty won't capture the standard error/output and direct it
-anywhere.
+But you can discard this output by setting `stdout = FALSE`:
+```{r}
+jetty::run({for (i in 1:5) message("iter", i, "\n"); TRUE}, stdout = FALSE)
+```
 
-## Where it's headed
+To see more details on controlling `stdout` and `stderr`, check out the
+[documentation here](https://stat.ethz.ch/R-manual/R-devel/library/base/html/system2.html).
 
-Maybe nowhere? This is still a relatively rough-shod implementation, and it's
-not totally clear to me what use-case it fills. However, it _feels_ like it
-should be useful somehow.
