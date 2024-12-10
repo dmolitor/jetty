@@ -48,12 +48,12 @@ local R session.
 
 ``` r
 jetty::run(function() var(iris[, 1:4]))
+#>              Sepal.Length Sepal.Width Petal.Length Petal.Width
+#> Sepal.Length    0.6856935  -0.0424340    1.2743154   0.5162707
+#> Sepal.Width    -0.0424340   0.1899794   -0.3296564  -0.1216394
+#> Petal.Length    1.2743154  -0.3296564    3.1162779   1.2956094
+#> Petal.Width     0.5162707  -0.1216394    1.2956094   0.5810063
 ```
-
-<picture>
-<source media="(prefers-color-scheme: dark)" srcset="man/figures/README-/unnamed-chunk-3-dark.svg">
-<img src="man/figures/README-/unnamed-chunk-3.svg" width="100%" />
-</picture>
 
 ### Specifying Docker container
 
@@ -82,24 +82,22 @@ following does not work:
 ``` r
 mycars <- cars
 jetty::run(function() summary(mycars))
+#> Error in (function () : object 'mycars' not found
 ```
-
-<picture>
-<source media="(prefers-color-scheme: dark)" srcset="man/figures/README-/unnamed-chunk-5-dark.svg">
-<img src="man/figures/README-/unnamed-chunk-5.svg" width="100%" />
-</picture>
 
 But this does:
 
 ``` r
 mycars <- cars
 jetty::run(function(x) summary(x), args = list(mycars))
+#>      speed           dist       
+#>  Min.   : 4.0   Min.   :  2.00  
+#>  1st Qu.:12.0   1st Qu.: 26.00  
+#>  Median :15.0   Median : 36.00  
+#>  Mean   :15.4   Mean   : 42.98  
+#>  3rd Qu.:19.0   3rd Qu.: 56.00  
+#>  Max.   :25.0   Max.   :120.00
 ```
-
-<picture>
-<source media="(prefers-color-scheme: dark)" srcset="man/figures/README-/unnamed-chunk-6-dark.svg">
-<img src="man/figures/README-/unnamed-chunk-6.svg" width="100%" />
-</picture>
 
 ### Using packages
 
@@ -117,12 +115,20 @@ jetty::run(
   },
   args = list(nrow = 10, ncol = 2)
 )
+#> Loading required package: Matrix
+#> 10 x 2 sparse Matrix of class "dgCMatrix"
+#>                    
+#>  [1,]  0.039  0.270
+#>  [2,]  0.460 -1.200
+#>  [3,] -1.300  0.052
+#>  [4,] -0.730 -0.370
+#>  [5,] -0.190  1.200
+#>  [6,] -0.100  1.500
+#>  [7,] -0.480 -0.062
+#>  [8,]  1.000 -0.045
+#>  [9,]  0.690  1.200
+#> [10,]  0.560  0.220
 ```
-
-<picture>
-<source media="(prefers-color-scheme: dark)" srcset="man/figures/README-/unnamed-chunk-7-dark.svg">
-<img src="man/figures/README-/unnamed-chunk-7.svg" width="100%" />
-</picture>
 
 and
 
@@ -131,12 +137,19 @@ jetty::run(
   function(nrow, ncol) Matrix::rsparsematrix(nrow, ncol, density = 1),
   args = list(nrow = 10, ncol = 2)
 )
+#> 10 x 2 sparse Matrix of class "dgCMatrix"
+#>                       
+#>  [1,]  0.1700  0.06000
+#>  [2,] -1.4000  0.27000
+#>  [3,]  0.2200  0.49000
+#>  [4,] -1.0000  1.20000
+#>  [5,] -0.0019  0.32000
+#>  [6,] -0.8800 -0.41000
+#>  [7,] -0.0670  0.01400
+#>  [8,] -2.2000 -0.37000
+#>  [9,]  1.5000 -1.50000
+#> [10,] -0.4700  0.00015
 ```
-
-<picture>
-<source media="(prefers-color-scheme: dark)" srcset="man/figures/README-/unnamed-chunk-8-dark.svg">
-<img src="man/figures/README-/unnamed-chunk-8.svg" width="100%" />
-</picture>
 
 #### Installing required packages
 
@@ -147,16 +160,12 @@ not installed in the Docker image:
 ``` r
 jetty::run(
   {
-    my_name <- "Daniel"
-    glue::glue("Hello {my_name}")
+    ggplot2::ggplot(mtcars, ggplot2::aes(x = hp, y = mpg)) +
+      ggplot2::geom_point()
   }
 )
+#> Error in loadNamespace(x): there is no package called ‘ggplot2’
 ```
-
-<picture>
-<source media="(prefers-color-scheme: dark)" srcset="man/figures/README-/unnamed-chunk-9-dark.svg">
-<img src="man/figures/README-/unnamed-chunk-9.svg" width="100%" />
-</picture>
 
 However, by setting `install_dependencies = TRUE` we can tell jetty to
 discover the required packages and install them before executing the
@@ -165,18 +174,15 @@ code:
 ``` r
 jetty::run(
   {
-    my_name <- "Daniel"
-    glue::glue("Hello {my_name}")
+    ggplot2::ggplot(mtcars, ggplot2::aes(x = hp, y = mpg)) +
+      ggplot2::geom_point()
   },
   install_dependencies = TRUE,
   stdout = TRUE
 )
 ```
 
-<picture>
-<source media="(prefers-color-scheme: dark)" srcset="man/figures/README-/unnamed-chunk-10-dark.svg">
-<img src="man/figures/README-/unnamed-chunk-10.svg" width="100%" />
-</picture>
+<img src="man/figures/README-unnamed-chunk-10-1.png" width="100%" />
 
 **Note**: this feature uses
 [`renv::dependencies`](https://rstudio.github.io/renv/reference/dependencies.html)
@@ -191,12 +197,8 @@ jetty copies errors from the child R process to the main R session:
 
 ``` r
 jetty::run(function() 1 + "A")
+#> Error in 1 + "A": non-numeric argument to binary operator
 ```
-
-<picture>
-<source media="(prefers-color-scheme: dark)" srcset="man/figures/README-/unnamed-chunk-11-dark.svg">
-<img src="man/figures/README-/unnamed-chunk-11.svg" width="100%" />
-</picture>
 
 Although the errors themselves are propagated to the main R session, the
 stack trace is (currently) not propagated. This means that calling
@@ -209,27 +211,24 @@ By default, the standard output and error of the Docker subprocess are
 printed to the R console. However, since jetty uses `system2()` to
 execute all Docker commands, you can specify the `stdout` and `stderr`
 arguments which will be passed directly to `system2()`. For example the
-following code will print a series of text to the console:
+following code will print a series of messages to the console:
 
 ``` r
-jetty::run({for (i in 1:5) cat("iter", i, "\n"); TRUE})
+jetty::run({for (i in 1:5) message(paste0("iter", i)); TRUE})
+#> iter1
+#> iter2
+#> iter3
+#> iter4
+#> iter5
+#> [1] TRUE
 ```
-
-<picture>
-<source media="(prefers-color-scheme: dark)" srcset="man/figures/README-/unnamed-chunk-12-dark.svg">
-<img src="man/figures/README-/unnamed-chunk-12.svg" width="100%" />
-</picture>
 
 But you can discard this output by setting `stdout = FALSE`:
 
 ``` r
-jetty::run({for (i in 1:5) cat("iter", i, "\n"); TRUE}, stdout = FALSE)
+jetty::run({for (i in 1:5) message(paste0("iter", i)); TRUE}, stdout = FALSE)
+#> [1] TRUE
 ```
-
-<picture>
-<source media="(prefers-color-scheme: dark)" srcset="man/figures/README-/unnamed-chunk-13-dark.svg">
-<img src="man/figures/README-/unnamed-chunk-13.svg" width="100%" />
-</picture>
 
 To see more details on controlling `stdout` and `stderr`, check out the
 [documentation
