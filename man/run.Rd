@@ -4,7 +4,15 @@
 \alias{run}
 \title{Execute an R expression inside a Docker container}
 \usage{
-run(func, args = list(), image = paste0("r-base:", r_version()), debug = FALSE)
+run(
+  func,
+  args = list(),
+  image = paste0("r-base:", r_version()),
+  stdout = "",
+  stderr = "",
+  install_dependencies = FALSE,
+  debug = FALSE
+)
 }
 \arguments{
 \item{func}{Function object or code block to be executed in the R session
@@ -19,7 +27,18 @@ Docker image or an image available on DockerHub. Default image is
 `r-base:your.r.version` where your R version is determined from your local
 R session.}
 
-\item{debug}{A logical indicating whether to print out the commands that are
+\item{stdout, stderr}{where output to ‘stdout’ or ‘stderr’ should be sent.
+Possible values are "", to the R console (the default), NULL or FALSE
+(discard output), TRUE (capture the output in a character vector) or a
+character string naming a file. See [system2] for more details.}
+
+\item{install_dependencies}{A boolean indicating whether jetty should
+discover packages used in your code and try to install them in the
+Docker container prior to executing the provided function/expression.
+In general, things will work better if the Docker image already has all
+necessary packages installed.}
+
+\item{debug}{A boolean indicating whether to print out the commands that are
 being executed via the shell. This is mostly helpful to see what is
 happening when things start to error.}
 }
@@ -63,6 +82,18 @@ run(
     model <- lm(mpg ~ ., data = mtcars)
     model
   }
+)
+}
+
+\dontrun{
+run(
+  {
+    mtcars |> 
+      dplyr::mutate(cyl = as.factor(cyl))
+    model <- lm(mpg ~ ., data = mtcars)
+    model
+  },
+  install_dependencies = TRUE
 )
 }
 
