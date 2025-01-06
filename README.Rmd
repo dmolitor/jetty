@@ -23,6 +23,7 @@ knitr::opts_chunk$set(
 # jetty <img src='man/figures/logo-no-bg.png' align="right" height="139"/>
 
 <!-- badges: start -->
+[![pkgdown](https://github.com/dmolitor/jetty/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/dmolitor/jetty/actions/workflows/pkgdown.yaml)
 <!-- badges: end -->
 
 > Execute R functions or code blocks within a Docker container.
