@@ -10,4 +10,16 @@
 
 Execute functions and expressions within the context of a Docker container and return results to the local R session.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/dmolitor/jetty}
+  \item Report bugs at \url{https://github.com/dmolitor/jetty/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Daniel Molitor \email{molitdj97@gmail.com} [copyright holder]
+
+}
 \keyword{internal}

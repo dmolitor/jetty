@@ -2,8 +2,11 @@ Package: jetty
 Type: Package
 Title: Execute R in a Docker Context
 Version: 0.1.0
-Author: Daniel Molitor
-Maintainer: Daniel Molitor <molitdj97@gmail.com>
+Authors@R: 
+    person(given = "Daniel",
+           family = "Molitor",
+           role = c("aut", "cph", "cre"),
+           email = "molitdj97@gmail.com")
 Description: Execute functions and expressions within the context of a Docker
     container and return results to the local R session.
 License: GPL (>= 3)
@@ -19,3 +22,5 @@ Suggests:
     testthat (>= 3.0.0)
 RoxygenNote: 7.3.2
 Config/testthat/edition: 3
+URL: https://github.com/dmolitor/jetty
+BugReports: https://github.com/dmolitor/jetty/issues
