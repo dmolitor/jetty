@@ -117,17 +117,17 @@ jetty::run(
 )
 #> Loading required package: Matrix
 #> 10 x 2 sparse Matrix of class "dgCMatrix"
-#>                  
-#>  [1,]  0.04  0.81
-#>  [2,]  0.46  0.69
-#>  [3,] -1.80 -0.12
-#>  [4,]  1.90  0.23
-#>  [5,]  0.68 -1.20
-#>  [6,] -0.20 -0.40
-#>  [7,]  1.00  0.87
-#>  [8,] -1.10  0.81
-#>  [9,] -1.60 -1.60
-#> [10,]  1.20 -0.56
+#>                   
+#>  [1,] -0.520 -1.20
+#>  [2,]  1.200  0.51
+#>  [3,] -1.000  0.53
+#>  [4,]  1.300  0.51
+#>  [5,] -0.062 -0.84
+#>  [6,]  1.700 -0.79
+#>  [7,] -2.300  0.58
+#>  [8,]  1.200  0.56
+#>  [9,]  1.900 -0.17
+#> [10,]  1.900 -0.52
 ```
 
 and
@@ -138,17 +138,17 @@ jetty::run(
   args = list(nrow = 10, ncol = 2)
 )
 #> 10 x 2 sparse Matrix of class "dgCMatrix"
-#>                   
-#>  [1,] -0.04  0.091
-#>  [2,]  1.20  2.700
-#>  [3,] -0.99 -1.400
-#>  [4,] -0.41 -0.870
-#>  [5,] -0.68 -0.690
-#>  [6,]  0.69  1.000
-#>  [7,] -0.77 -0.013
-#>  [8,]  1.50  0.100
-#>  [9,]  0.40  0.300
-#> [10,] -0.23 -0.590
+#>                    
+#>  [1,]  1.400 -1.900
+#>  [2,]  1.600  0.280
+#>  [3,] -0.270  1.000
+#>  [4,] -0.220  0.490
+#>  [5,] -1.400 -1.300
+#>  [6,]  2.100  0.069
+#>  [7,] -0.028 -2.100
+#>  [8,] -0.290 -0.900
+#>  [9,]  1.300 -0.240
+#> [10,]  0.390 -0.730
 ```
 
 #### Installing required packages
@@ -295,3 +295,11 @@ four <- jetty::run(
 )
 #> Error in loadNamespace(x): there is no package called ‘praise’
 ```
+
+#### Multiple .Rprofile or .Renviron files
+
+Currently jetty only supports single `.Rprofile` or `.Renviron` files.
+So, for example, if a user has a project-specific .Rprofile in the
+current working directory at `./.Rprofile` and then a user-specific
+.Rprofile at `~/.Rprofile`, jetty will only source `./.Rprofile` and
+will ignore `~/.Rprofile`. This is a feature I plan to add before long.

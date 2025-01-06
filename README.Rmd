@@ -251,3 +251,11 @@ four <- jetty::run(
   r_profile = here::here("man/scaffolding/.Rprofile")
 )
 ```
+
+#### Multiple .Rprofile or .Renviron files
+
+Currently jetty only supports single `.Rprofile` or `.Renviron` files. So,
+for example, if a user has a project-specific .Rprofile in the current
+working directory at `./.Rprofile` and then a user-specific .Rprofile at
+`~/.Rprofile`, jetty will only source `./.Rprofile` and will ignore
+`~/.Rprofile`. This is a feature I plan to add before long.
