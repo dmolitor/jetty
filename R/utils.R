@@ -1,12 +1,5 @@
-bindmount_home <- function() {
-  # TODO: Determine if this is the drive we want to mount
-  home_dir <- path.expand("~")
-  arg <- paste0("-v ", home_dir, ":", home_dir, "/:rw")
-  arg
-}
-
-bindmount_temp <- function(dir) {
-  arg <- paste0("-v ", dir, ":", dir, "/:rw")
+bindmount_temp <- function(local, docker) {
+  arg <- paste0("-v ", local, ":", docker)
   arg
 }
 
@@ -35,6 +28,23 @@ handle_error <- function(x) {
   invisible(x)
 }
 
+jetty_temp_dir <- function() "/jetty/tmp/"
+
+prof_env_bindmounts <- function(r_profile, r_environ) {
+  r_profile <- normalizePath(r_profile, mustWork = FALSE)
+  r_environ <- normalizePath(r_environ, mustWork = FALSE)
+  r_prof_mount <- r_env_mount <- r_prof_load <- r_env_load <- NULL
+  if (file.exists(r_profile)) {
+    r_prof_mount <- paste0("-v ", r_profile, ":", "/jetty/.Rprofile")
+    r_prof_load <- "source('/jetty/.Rprofile')"
+  } 
+  if (file.exists(r_environ)) {
+    r_env_mount <- paste0("-v ", r_environ, ":", "/jetty/.Renviron")
+    r_env_load <- "readRenviron('/jetty/.Renviron')"
+  }
+  return(list(r_prof_mount, r_env_mount, r_prof_load, r_env_load))
+}
+
 r_version <- function() {
   paste0(R.version$major, ".", R.version$minor)
 }
@@ -50,4 +60,27 @@ stop_if_not_installed <- function() {
       call = parent.frame()
     )
   }
+}
+
+take_stock <- function(expr, install_dependencies, temp_dir, r_profile) {
+  if (install_dependencies) {
+    dependencies_rprofile <- NULL
+    temp_R <- file.path(temp_dir, "jetty.R")
+    writeLines(rlang::expr_text(expr), temp_R)
+    on.exit(if (file.exists(temp_R)) file.remove(temp_R), add = TRUE)
+    dependencies_expr <- renv::dependencies(temp_R, quiet = TRUE)$Package
+    if (length(dependencies_expr) == 0) {
+      dependencies_expr <- NULL
+    }
+    if (file.exists(r_profile)) {
+      dependencies_rprofile <- renv::dependencies(r_profile, quiet = TRUE)$Package
+      if (length(dependencies_rprofile) == 0) {
+        dependencies_rprofile <- NULL
+      }
+    }
+    dependencies <- c(dependencies_expr, dependencies_rprofile)
+  } else {
+    dependencies <- NULL
+  }
+  return(dependencies)
 }

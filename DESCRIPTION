@@ -1,7 +1,7 @@
 Package: jetty
 Type: Package
 Title: Execute R in a Docker Context
-Version: 0.0.0.9002
+Version: 0.1.0
 Author: Daniel Molitor
 Maintainer: Daniel Molitor <molitdj97@gmail.com>
 Description: Execute functions and expressions within the context of a Docker
@@ -13,6 +13,7 @@ Imports:
     renv (>= 1.0.0),
     rlang
 Suggests:
+    here,
     Matrix,
     ggplot2,
     testthat (>= 3.0.0)
