@@ -15,7 +15,8 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.path = "man/figures/README-",
-  out.width = "80%"
+  out.width = "80%",
+  dpi = 300
 )
 ```
 
@@ -192,3 +193,61 @@ jetty::run({for (i in 1:5) message(paste0("iter", i)); TRUE}, stdout = FALSE)
 To see more details on controlling `stdout` and `stderr`, check out the
 [documentation here](https://stat.ethz.ch/R-manual/R-devel/library/base/html/system2.html).
 
+### .Rprofile and .Renviron
+
+jetty also provides some support for `.Rprofile` and `.Renviron` files. By
+default, jetty will search for files called ".Rprofile" and ".Renviron" in
+the current working directory. If these files exist, jetty will port them
+to the Docker execution environment and will execute any code in `.Rprofile`
+and load all environment variables in `.Renviron` before executing the provided
+R code. If the `.Rprofile` file uses external packages, it is
+essential to tell jetty to install required packages (as described above)
+otherwise the code will fail.
+
+The user can explicitly provide `.Rprofile` and `.Renviron` file paths via the
+`r_profile` and `r_environ` arguments. For example, the following code will
+attach the `.Rprofile` found in the `/man/scaffolding/` sub-directory of the
+current working directory. This file simply uses the
+[praise](https://github.com/rladies/praise) package to provide some
+encouragement at the start of a new R session.
+```{r, eval = FALSE, message = TRUE}
+four <- jetty::run(
+  \() 2 + 2,
+  r_profile = here::here("man/scaffolding/.Rprofile"),
+  install_dependencies = TRUE
+)
+#> Installing package into ‘/usr/local/lib/R/site-library’
+#> (as ‘lib’ is unspecified)
+#> trying URL 'https://r-lib.github.io/p/pak/stable/source/linux-gnu/aarch64/src/contrib/../../../../../linux/aarch64/pak_0.8.0_R-4-4_aarch64-linux.tar.gz'
+#> Content type 'application/gzip' length 8847947 bytes (8.4 MB)
+#> ==================================================
+#> downloaded 8.4 MB
+#> 
+#> * installing *binary* package ‘pak’ ...
+#> * DONE (pak)
+#> 
+#> The downloaded source packages are in
+#> 	‘/tmp/RtmpNxnaJk/downloaded_packages’
+#> ✔ Updated metadata database: 3.07 MB in 8 files.
+#> ✔ Updating metadata database ... done
+#>  
+#> → Will install 1 package.
+#> → Will download 1 CRAN package (6.10 kB).
+#> + praise   1.0.0 [bld][dl] (6.10 kB)
+#>   
+#> ℹ Getting 1 pkg (6.10 kB)
+#> ✔ Got praise 1.0.0 (source) (6.10 kB)
+#> ℹ Building praise 1.0.0
+#> ✔ Built praise 1.0.0 (403ms)
+#> ✔ Installed praise 1.0.0  (7ms)
+#> ✔ 1 pkg: added 1, dld 1 (6.10 kB) [3.8s]
+#> You are exquisite!
+```
+
+However, as noted above, this fails if `install_dependencies = FALSE`.
+```{r, error = TRUE}
+four <- jetty::run(
+  \() 2 + 2,
+  r_profile = here::here("man/scaffolding/.Rprofile")
+)
+```

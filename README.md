@@ -117,17 +117,17 @@ jetty::run(
 )
 #> Loading required package: Matrix
 #> 10 x 2 sparse Matrix of class "dgCMatrix"
-#>                   
-#>  [1,]  0.940 -0.73
-#>  [2,]  0.620  1.80
-#>  [3,]  0.550  2.40
-#>  [4,] -0.084 -1.50
-#>  [5,] -1.700 -1.10
-#>  [6,] -1.000 -0.21
-#>  [7,]  2.200 -0.19
-#>  [8,] -0.680 -0.74
-#>  [9,]  0.810  0.78
-#> [10,]  1.500 -0.36
+#>                  
+#>  [1,]  0.04  0.81
+#>  [2,]  0.46  0.69
+#>  [3,] -1.80 -0.12
+#>  [4,]  1.90  0.23
+#>  [5,]  0.68 -1.20
+#>  [6,] -0.20 -0.40
+#>  [7,]  1.00  0.87
+#>  [8,] -1.10  0.81
+#>  [9,] -1.60 -1.60
+#> [10,]  1.20 -0.56
 ```
 
 and
@@ -139,16 +139,16 @@ jetty::run(
 )
 #> 10 x 2 sparse Matrix of class "dgCMatrix"
 #>                   
-#>  [1,] -0.95  0.059
-#>  [2,] -1.00 -1.100
-#>  [3,] -0.48  0.290
-#>  [4,] -0.70 -1.100
-#>  [5,]  0.66  0.064
-#>  [6,] -2.10  0.870
-#>  [7,]  1.30 -0.510
-#>  [8,]  0.73  0.041
-#>  [9,] -1.20  0.830
-#> [10,]  0.49 -0.019
+#>  [1,] -0.04  0.091
+#>  [2,]  1.20  2.700
+#>  [3,] -0.99 -1.400
+#>  [4,] -0.41 -0.870
+#>  [5,] -0.68 -0.690
+#>  [6,]  0.69  1.000
+#>  [7,] -0.77 -0.013
+#>  [8,]  1.50  0.100
+#>  [9,]  0.40  0.300
+#> [10,] -0.23 -0.590
 ```
 
 #### Installing required packages
@@ -233,3 +233,65 @@ jetty::run({for (i in 1:5) message(paste0("iter", i)); TRUE}, stdout = FALSE)
 To see more details on controlling `stdout` and `stderr`, check out the
 [documentation
 here](https://stat.ethz.ch/R-manual/R-devel/library/base/html/system2.html).
+
+### .Rprofile and .Renviron
+
+jetty also provides some support for `.Rprofile` and `.Renviron` files.
+By default, jetty will search for files called “.Rprofile” and
+“.Renviron” in the current working directory. If these files exist,
+jetty will port them to the Docker execution environment and will
+execute any code in `.Rprofile` and load all environment variables in
+`.Renviron` before executing the provided R code. If the `.Rprofile`
+file uses external packages, it is essential to tell jetty to install
+required packages (as described above) otherwise the code will fail.
+
+The user can explicitly provide `.Rprofile` and `.Renviron` file paths
+via the `r_profile` and `r_environ` arguments. For example, the
+following code will attach the `.Rprofile` found in the
+`/man/scaffolding/` sub-directory of the current working directory. This
+file simply uses the [praise](https://github.com/rladies/praise) package
+to provide some encouragement at the start of a new R session.
+
+``` r
+four <- jetty::run(
+  \() 2 + 2,
+  r_profile = here::here("man/scaffolding/.Rprofile"),
+  install_dependencies = TRUE
+)
+#> Installing package into ‘/usr/local/lib/R/site-library’
+#> (as ‘lib’ is unspecified)
+#> trying URL 'https://r-lib.github.io/p/pak/stable/source/linux-gnu/aarch64/src/contrib/../../../../../linux/aarch64/pak_0.8.0_R-4-4_aarch64-linux.tar.gz'
+#> Content type 'application/gzip' length 8847947 bytes (8.4 MB)
+#> ==================================================
+#> downloaded 8.4 MB
+#> 
+#> * installing *binary* package ‘pak’ ...
+#> * DONE (pak)
+#> 
+#> The downloaded source packages are in
+#>  ‘/tmp/RtmpNxnaJk/downloaded_packages’
+#> ✔ Updated metadata database: 3.07 MB in 8 files.
+#> ✔ Updating metadata database ... done
+#>  
+#> → Will install 1 package.
+#> → Will download 1 CRAN package (6.10 kB).
+#> + praise   1.0.0 [bld][dl] (6.10 kB)
+#>   
+#> ℹ Getting 1 pkg (6.10 kB)
+#> ✔ Got praise 1.0.0 (source) (6.10 kB)
+#> ℹ Building praise 1.0.0
+#> ✔ Built praise 1.0.0 (403ms)
+#> ✔ Installed praise 1.0.0  (7ms)
+#> ✔ 1 pkg: added 1, dld 1 (6.10 kB) [3.8s]
+#> You are exquisite!
+```
+
+However, as noted above, this fails if `install_dependencies = FALSE`.
+
+``` r
+four <- jetty::run(
+  \() 2 + 2,
+  r_profile = here::here("man/scaffolding/.Rprofile")
+)
+#> Error in loadNamespace(x): there is no package called ‘praise’
+```
