@@ -1,0 +1,5 @@
+url: http://www.dmolitor.com/jetty/
+template:
+  bootstrap: 5
+  bootswatch: sandstone
+
