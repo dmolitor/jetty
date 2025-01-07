@@ -8,14 +8,14 @@ docker_command(args, stdout = "", stderr = "", ...)
 }
 \arguments{
 \item{args}{A single argument or vector of arguments to pass
-to [base::system2].}
+to \code{\link{system2}}.}
 
 \item{stdout, stderr}{where output to ‘stdout’ or ‘stderr’ should be sent.
 Possible values are "", to the R console (the default), NULL or FALSE
 (discard output), TRUE (capture the output in a character vector) or a
-character string naming a file. See [base::system2] for more details.}
+character string naming a file. See \code{\link{system2}} for more details.}
 
-\item{...}{Additional arguments to pass directly to [base::system2].}
+\item{...}{Additional arguments to pass directly to \code{\link{system2}}.}
 }
 \value{
 The output of the given command as a string.

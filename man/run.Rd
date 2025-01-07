@@ -19,12 +19,12 @@ run(
 \arguments{
 \item{func}{Function object or code block to be executed in the R session
 within the Docker container. It is best to reference package functions using
-the `::` notation, and only packages installed in the Docker container are
+the \code{::} notation, and only packages installed in the Docker container are
 accessible.}
 
 \item{args}{Arguments to pass to the function. Must be a list.}
 
-\item{image}{A string in the `image:tag` format specifying either a local
+\item{image}{A string in the \code{image:tag} format specifying either a local
 Docker image or an image available on DockerHub. Default image is
 \code{r-base:{jetty:::r_version()}} where your R version is determined from
 your local R session.}
@@ -32,7 +32,7 @@ your local R session.}
 \item{stdout, stderr}{Where output to ‘stdout’ or ‘stderr’ should be sent.
 Possible values are "" (send to the R console; the default), NULL or FALSE
 (discard output), TRUE (capture the output in a character vector) or a
-character string naming a file. See [base::system2] for more details.}
+character string naming a file. See \code{\link{system2}} for more details.}
 
 \item{install_dependencies}{A boolean indicating whether jetty should
 discover packages used in your code and try to install them in the
@@ -56,7 +56,7 @@ Value of the evaluated expression.
 }
 \description{
 This function is somewhat similar in spirit to
-`callr::r()` in that the user can pass
+\code{callr::r()} in that the user can pass
 a function (or a code block) to be evaluated. This code will
 be executed within the context of a Docker container and the result will be
 returned within the local R session.
@@ -84,7 +84,7 @@ jetty will propagate errors from the Docker process to the main process.
 That is, if an error is thrown in the Docker process, an error with the same
 message will be thrown in the main process. However, because of the
 somewhat isolated nature of the local process and the Docker process,
-calling functions such as `base::traceback()` and `rlang::last_trace()` will,
+calling functions such as \code{base::traceback()} and \code{rlang::last_trace()} will,
 unfortunately, not print the callstack of the uncaught error as that has
 (in its current form) been lost in the Docker void.
 }
