@@ -36,17 +36,17 @@ command_shell_prep <- function(expr, rprof, renv, temp_out, temp_in, dependencie
 #' and return the results to the local R session.
 #'
 #' @param args A single argument or vector of arguments to pass
-#'   to [system2].
+#'   to [base::system2].
 #' @param stdout,stderr where output to ‘stdout’ or ‘stderr’ should be sent.
 #'   Possible values are "", to the R console (the default), NULL or FALSE
 #'   (discard output), TRUE (capture the output in a character vector) or a
-#'   character string naming a file. See [system2] for more details.
-#' @param ... Additional arguments to pass directly to [system2].
+#'   character string naming a file. See [base::system2] for more details.
+#' @param ... Additional arguments to pass directly to [base::system2].
+#' @return The output of the given command as a string.
 #' @examples
 #' \dontrun{
 #' docker_info <- docker_command(c("info", "--format '{{json .}}'"), stdout = TRUE)
 #' }
-#' @return The output of the given command as a string.
 #' @export
 docker_command <- function(args, stdout = "", stderr = "", ...) {
   stop_if_not_installed()
@@ -69,7 +69,7 @@ docker_command <- function(args, stdout = "", stderr = "", ...) {
 #' Execute an R expression inside a Docker container
 #'
 #' This function is somewhat similar in spirit to
-#' [callr::r()] in that the user can pass
+#' `callr::r()` in that the user can pass
 #' a function (or a code block) to be evaluated. This code will
 #' be executed within the context of a Docker container and the result will be
 #' returned within the local R session.
@@ -94,7 +94,7 @@ docker_command <- function(args, stdout = "", stderr = "", ...) {
 #' That is, if an error is thrown in the Docker process, an error with the same
 #' message will be thrown in the main process. However, because of the
 #' somewhat isolated nature of the local process and the Docker process,
-#' calling functions such as [traceback()] and [rlang::last_trace()] will,
+#' calling functions such as `base::traceback()` and `rlang::last_trace()` will,
 #' unfortunately, not print the callstack of the uncaught error as that has
 #' (in its current form) been lost in the Docker void.
 #'
@@ -105,12 +105,12 @@ docker_command <- function(args, stdout = "", stderr = "", ...) {
 #' @param args Arguments to pass to the function. Must be a list.
 #' @param image A string in the `image:tag` format specifying either a local
 #'   Docker image or an image available on DockerHub. Default image is
-#'   `r-base:\{jetty:::r_version()\}` where your R version is determined from
+#'   \code{r-base:{jetty:::r_version()}} where your R version is determined from
 #'   your local R session.
 #' @param stdout,stderr Where output to ‘stdout’ or ‘stderr’ should be sent.
-#'   Possible values are "", to the R console (the default), NULL or FALSE
+#'   Possible values are "" (send to the R console; the default), NULL or FALSE
 #'   (discard output), TRUE (capture the output in a character vector) or a
-#'   character string naming a file. See [system2] for more details.
+#'   character string naming a file. See [base::system2] for more details.
 #' @param install_dependencies A boolean indicating whether jetty should
 #'   discover packages used in your code and try to install them in the
 #'   Docker container prior to executing the provided function/expression.

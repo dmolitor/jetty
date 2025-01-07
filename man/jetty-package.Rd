@@ -14,6 +14,7 @@ Execute functions and expressions within the context of a Docker container and r
 Useful links:
 \itemize{
   \item \url{https://github.com/dmolitor/jetty}
+  \item \url{http://www.dmolitor.com/jetty/}
   \item Report bugs at \url{https://github.com/dmolitor/jetty/issues}
 }
 
