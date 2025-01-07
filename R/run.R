@@ -137,9 +137,7 @@ docker_command <- function(args, stdout = "", stderr = "", ...) {
 #'     model
 #'   }
 #' )
-#' }
 #' 
-#' \dontrun{
 #' run(
 #'   {
 #'     mtcars |> 
@@ -150,10 +148,8 @@ docker_command <- function(args, stdout = "", stderr = "", ...) {
 #'   install_dependencies = TRUE
 #' )
 #' 
-#' \dontrun{
 #' # This will error since the `praise` package is not installed
 #' run(function() praise::praise())
-#' }
 #' }
 #'
 #' @export

@@ -99,9 +99,7 @@ run(
     model
   }
 )
-}
 
-\dontrun{
 run(
   {
     mtcars |> 
@@ -112,10 +110,8 @@ run(
   install_dependencies = TRUE
 )
 
-\dontrun{
 # This will error since the `praise` package is not installed
 run(function() praise::praise())
-}
 }
 
 }
