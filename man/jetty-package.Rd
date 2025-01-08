@@ -4,11 +4,11 @@
 \name{jetty-package}
 \alias{jetty}
 \alias{jetty-package}
-\title{jetty: Execute R in a Docker Context}
+\title{jetty: Execute R in a 'Docker' Context}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Execute functions and expressions within the context of a Docker container and return results to the local R session.
+The goal of 'jetty' is to execute R functions and code snippets in an isolated R subprocess within a 'Docker' container and return the evaluated results to the local R session. 'jetty' can install necessary packages at runtime and seamlessly propagates errors and outputs from the 'Docker' subprocess back to the main session. 'jetty' is primarily designed for sandboxed testing and quick execution of example code.
 }
 \seealso{
 Useful links:

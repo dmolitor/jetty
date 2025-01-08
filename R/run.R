@@ -30,24 +30,24 @@ command_shell_prep <- function(expr, rprof, renv, temp_out, temp_in, dependencie
   expr
 }
 
-#' Run a Docker command
-#'
-#' Execute a function or code block within the context of a Docker container
-#' and return the results to the local R session.
-#'
-#' @param args A single argument or vector of arguments to pass
-#'   to \code{\link{system2}}.
-#' @param stdout,stderr where output to ‘stdout’ or ‘stderr’ should be sent.
-#'   Possible values are "", to the R console (the default), NULL or FALSE
-#'   (discard output), TRUE (capture the output in a character vector) or a
-#'   character string naming a file. See \code{\link{system2}} for more details.
-#' @param ... Additional arguments to pass directly to \code{\link{system2}}.
-#' @return The output of the given command as a string.
-#' @examples
-#' \dontrun{
-#' docker_info <- docker_command(c("info", "--format '{{json .}}'"), stdout = TRUE)
-#' }
-#' @export
+# Run a Docker command
+#
+# Execute a function or code block within the context of a Docker container
+# and return the results to the local R session.
+#
+# @param args A single argument or vector of arguments to pass
+#   to \code{\link{system2}}.
+# @param stdout,stderr where output to ‘stdout’ or ‘stderr’ should be sent.
+#   Possible values are "", to the R console (the default), NULL or FALSE
+#   (discard output), TRUE (capture the output in a character vector) or a
+#   character string naming a file. See \code{\link{system2}} for more details.
+# @param ... Additional arguments to pass directly to \code{\link{system2}}.
+# @return The output of the given command as a string.
+# @examples
+# \dontrun{
+# docker_info <- docker_command(c("info", "--format '{{json .}}'"), stdout = TRUE)
+# }
+# @export
 docker_command <- function(args, stdout = "", stderr = "", ...) {
   stop_if_not_installed()
   cmd <- suppressWarnings(system2("docker", args = args, stdout = stdout, stderr = stderr, ...))
@@ -94,8 +94,8 @@ docker_command <- function(args, stdout = "", stderr = "", ...) {
 #' That is, if an error is thrown in the Docker process, an error with the same
 #' message will be thrown in the main process. However, because of the
 #' somewhat isolated nature of the local process and the Docker process,
-#' calling functions such as \code{base::traceback()} and \code{rlang::last_trace()} will,
-#' unfortunately, not print the callstack of the uncaught error as that has
+#' calling functions such as \code{base::traceback()} and \code{rlang::last_trace()} will
+#' not print the callstack of the uncaught error as that has
 #' (in its current form) been lost in the Docker void.
 #'
 #' @param func Function object or code block to be executed in the R session
@@ -138,9 +138,10 @@ docker_command <- function(args, stdout = "", stderr = "", ...) {
 #'   }
 #' )
 #' 
+#' # A code snippet that requires packages to be installed
 #' run(
 #'   {
-#'     mtcars |> 
+#'     mtcars <- mtcars |> 
 #'       dplyr::mutate(cyl = as.factor(cyl))
 #'     model <- lm(mpg ~ ., data = mtcars)
 #'     model

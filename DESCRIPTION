@@ -1,14 +1,19 @@
 Package: jetty
 Type: Package
-Title: Execute R in a Docker Context
+Title: Execute R in a 'Docker' Context
 Version: 0.1.0
 Authors@R: 
     person(given = "Daniel",
            family = "Molitor",
            role = c("aut", "cph", "cre"),
            email = "molitdj97@gmail.com")
-Description: Execute functions and expressions within the context of a Docker
-    container and return results to the local R session.
+Description: The goal of 'jetty' is to execute R functions and code
+    snippets in an isolated R subprocess within a 'Docker' container
+    and return the evaluated results to the local R session. 'jetty'
+    can install necessary packages at runtime and seamlessly propagates
+    errors and outputs from the 'Docker' subprocess back to the main
+    session. 'jetty' is primarily designed for sandboxed testing and
+    quick execution of example code.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true

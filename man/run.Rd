@@ -84,8 +84,8 @@ jetty will propagate errors from the Docker process to the main process.
 That is, if an error is thrown in the Docker process, an error with the same
 message will be thrown in the main process. However, because of the
 somewhat isolated nature of the local process and the Docker process,
-calling functions such as \code{base::traceback()} and \code{rlang::last_trace()} will,
-unfortunately, not print the callstack of the uncaught error as that has
+calling functions such as \code{base::traceback()} and \code{rlang::last_trace()} will
+not print the callstack of the uncaught error as that has
 (in its current form) been lost in the Docker void.
 }
 
@@ -100,9 +100,10 @@ run(
   }
 )
 
+# A code snippet that requires packages to be installed
 run(
   {
-    mtcars |> 
+    mtcars <- mtcars |> 
       dplyr::mutate(cyl = as.factor(cyl))
     model <- lm(mpg ~ ., data = mtcars)
     model
