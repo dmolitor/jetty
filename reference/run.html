@@ -144,8 +144,8 @@ container does not have access to the local file system.</p>
 That is, if an error is thrown in the Docker process, an error with the same
 message will be thrown in the main process. However, because of the
 somewhat isolated nature of the local process and the Docker process,
-calling functions such as <code><a href="https://rdrr.io/r/base/traceback.html" class="external-link">base::traceback()</a></code> and <code><a href="https://rlang.r-lib.org/reference/last_error.html" class="external-link">rlang::last_trace()</a></code> will,
-unfortunately, not print the callstack of the uncaught error as that has
+calling functions such as <code><a href="https://rdrr.io/r/base/traceback.html" class="external-link">base::traceback()</a></code> and <code><a href="https://rlang.r-lib.org/reference/last_error.html" class="external-link">rlang::last_trace()</a></code> will
+not print the callstack of the uncaught error as that has
 (in its current form) been lost in the Docker void.</p>
     </div>
 
@@ -161,9 +161,10 @@ unfortunately, not print the callstack of the uncaught error as that has
 <span class="r-in"><span>  <span class="op">}</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># A code snippet that requires packages to be installed</span></span></span>
 <span class="r-in"><span><span class="fu">run</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="op">{</span></span></span>
-<span class="r-in"><span>    <span class="va">mtcars</span> <span class="op">|&gt;</span> </span></span>
+<span class="r-in"><span>    <span class="va">mtcars</span> <span class="op">&lt;-</span> <span class="va">mtcars</span> <span class="op">|&gt;</span> </span></span>
 <span class="r-in"><span>      <span class="fu">dplyr</span><span class="fu">::</span><span class="fu">mutate</span><span class="op">(</span>cyl <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span>    <span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span></span>
 <span class="r-in"><span>    <span class="va">model</span></span></span>
