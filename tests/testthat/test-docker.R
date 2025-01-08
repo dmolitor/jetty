@@ -41,7 +41,8 @@ test_that("jetty executes commands and gets expected results", {
       set.seed(123)
       function(ncol) Matrix::rsparsematrix(10, ncol, 1)
     },
-    args = list(ncol = 10))
+    args = list(ncol = 10), 
+    image = "r-base:latest")
   )
 
   # ggplot2 example
