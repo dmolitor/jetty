@@ -25,6 +25,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 [![pkgdown](https://github.com/dmolitor/jetty/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/dmolitor/jetty/actions/workflows/pkgdown.yaml)
 [![R-CMD-check](https://github.com/dmolitor/jetty/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/dmolitor/jetty/actions/workflows/R-CMD-check.yaml)
+[![CRAN status](https://www.r-pkg.org/badges/version/jetty)](https://CRAN.R-project.org/package=jetty)
 <!-- badges: end -->
 
 > Execute R functions or code blocks within a Docker container.

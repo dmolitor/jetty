@@ -7,6 +7,8 @@
 
 [![pkgdown](https://github.com/dmolitor/jetty/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/dmolitor/jetty/actions/workflows/pkgdown.yaml)
 [![R-CMD-check](https://github.com/dmolitor/jetty/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/dmolitor/jetty/actions/workflows/R-CMD-check.yaml)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/jetty)](https://CRAN.R-project.org/package=jetty)
 <!-- badges: end -->
 
 > Execute R functions or code blocks within a Docker container.
@@ -120,17 +122,17 @@ jetty::run(
 )
 #> Loading required package: Matrix
 #> 10 x 2 sparse Matrix of class "dgCMatrix"
-#>                  
-#>  [1,] -0.64  1.10
-#>  [2,] -0.44 -0.87
-#>  [3,]  1.30 -1.20
-#>  [4,]  2.50  0.73
-#>  [5,] -0.39 -0.31
-#>  [6,] -0.12  0.93
-#>  [7,]  0.86  0.66
-#>  [8,]  1.90  0.75
-#>  [9,] -0.53  0.14
-#> [10,] -0.94  1.10
+#>                   
+#>  [1,] -0.460  0.73
+#>  [2,]  3.200 -1.30
+#>  [3,]  0.440 -1.10
+#>  [4,] -0.930  2.40
+#>  [5,]  0.040 -1.20
+#>  [6,] -0.960  1.40
+#>  [7,]  0.250  0.82
+#>  [8,]  0.088  1.40
+#>  [9,]  1.400 -1.20
+#> [10,] -0.600 -1.20
 ```
 
 and
@@ -141,17 +143,17 @@ jetty::run(
   args = list(nrow = 10, ncol = 2)
 )
 #> 10 x 2 sparse Matrix of class "dgCMatrix"
-#>                  
-#>  [1,] -2.20 -1.50
-#>  [2,]  1.20 -1.10
-#>  [3,]  0.33  1.50
-#>  [4,]  0.70 -0.87
-#>  [5,] -1.50 -0.43
-#>  [6,]  0.41  0.25
-#>  [7,]  0.60  0.33
-#>  [8,] -0.53 -1.60
-#>  [9,]  0.45  0.11
-#> [10,] -0.33  0.69
+#>                   
+#>  [1,] -0.920 -0.96
+#>  [2,]  1.200  0.53
+#>  [3,]  0.520 -0.32
+#>  [4,]  0.046 -0.81
+#>  [5,]  0.180  0.73
+#>  [6,] -0.770  0.54
+#>  [7,] -0.550 -0.60
+#>  [8,] -1.300 -0.27
+#>  [9,] -0.140 -1.70
+#> [10,]  0.430  0.40
 ```
 
 #### Installing required packages
