@@ -51,9 +51,14 @@ the error is an rlang error, it will include the full stack trace.
 - Shows and/or collects the standard output and standard error of the Docker
 subprocess.
 
-## Install
+## Installation
 
-To install jetty from GitHub:
+Install jetty from CRAN:
+```{r, eval = FALSE}
+install.packages("jetty")
+```
+
+Or install the development version of jetty from GitHub:
 ```{r, eval = FALSE}
 # install.packages("pak")
 pak::pkg_install("dmolitor/jetty")

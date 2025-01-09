@@ -36,9 +36,15 @@ package attempts to achieve this!
 - Shows and/or collects the standard output and standard error of the
   Docker subprocess.
 
-## Install
+## Installation
 
-To install jetty from GitHub:
+Install jetty from CRAN:
+
+``` r
+install.packages("jetty")
+```
+
+Or install the development version of jetty from GitHub:
 
 ``` r
 # install.packages("pak")
@@ -123,16 +129,16 @@ jetty::run(
 #> Loading required package: Matrix
 #> 10 x 2 sparse Matrix of class "dgCMatrix"
 #>                   
-#>  [1,] -0.460  0.73
-#>  [2,]  3.200 -1.30
-#>  [3,]  0.440 -1.10
-#>  [4,] -0.930  2.40
-#>  [5,]  0.040 -1.20
-#>  [6,] -0.960  1.40
-#>  [7,]  0.250  0.82
-#>  [8,]  0.088  1.40
-#>  [9,]  1.400 -1.20
-#> [10,] -0.600 -1.20
+#>  [1,] -0.55 -0.230
+#>  [2,] -1.20  0.170
+#>  [3,]  1.70  1.100
+#>  [4,]  0.89  0.660
+#>  [5,] -0.42  0.860
+#>  [6,]  0.75  0.340
+#>  [7,] -0.28  1.100
+#>  [8,]  0.69 -1.000
+#>  [9,] -1.10  0.043
+#> [10,] -2.30 -0.220
 ```
 
 and
@@ -144,16 +150,16 @@ jetty::run(
 )
 #> 10 x 2 sparse Matrix of class "dgCMatrix"
 #>                   
-#>  [1,] -0.920 -0.96
-#>  [2,]  1.200  0.53
-#>  [3,]  0.520 -0.32
-#>  [4,]  0.046 -0.81
-#>  [5,]  0.180  0.73
-#>  [6,] -0.770  0.54
-#>  [7,] -0.550 -0.60
-#>  [8,] -1.300 -0.27
-#>  [9,] -0.140 -1.70
-#> [10,]  0.430  0.40
+#>  [1,]  0.027 -1.90
+#>  [2,]  0.300  0.26
+#>  [3,]  0.022  0.37
+#>  [4,] -1.100  1.30
+#>  [5,]  1.900 -0.88
+#>  [6,] -0.140 -0.43
+#>  [7,] -0.980 -1.50
+#>  [8,]  0.350  0.72
+#>  [9,] -0.350  0.69
+#> [10,]  0.870  1.00
 ```
 
 #### Installing required packages
@@ -187,7 +193,7 @@ jetty::run(
 )
 ```
 
-<img src="man/figures/README-unnamed-chunk-10-1.png" width="80%" />
+<img src="man/figures/README-unnamed-chunk-11-1.png" width="80%" />
 
 **Note**: this feature uses
 [`renv::dependencies`](https://rstudio.github.io/renv/reference/dependencies.html)
