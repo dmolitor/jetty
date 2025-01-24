@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">jetty</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,10 +32,16 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2.0" id="jetty-020">jetty 0.2.0<a class="anchor" aria-label="anchor" href="#jetty-020"></a></h2>
+<ul><li>
+<strong>Execute an R script in a Docker container</strong>: jetty now supports executing an R script in a Docker container via the <code><a href="../reference/run_script.html">run_script()</a></code> function. A particularly important argument is the <code>context</code> argument. This user should specify this as the filepath to a directory that serves as the script’s execution context. Specifically, this directory will be mounted to the Docker container and, as a result, this script will have access to all files/directories contained within the context. The script’s execution will fail if it attempts to interact with any files/directories outside the provided context directory. <strong>Note</strong>: this is a feature that is only designed to work well with MacOS and Linux and will most likely crap out if used on Windows.</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.0" id="jetty-010">jetty 0.1.0<a class="anchor" aria-label="anchor" href="#jetty-010"></a></h2><p class="text-muted">CRAN release: 2025-01-09</p>
 <ul><li>Initial CRAN submission.</li>
 </ul></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
