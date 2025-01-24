@@ -67,6 +67,7 @@
 <li><p>Discovers and installs required packages in the Docker container at run-time.</p></li>
 <li><p>Copies error objects back from the subprocess. In general, these error objects do not include the stack trace from the Docker R process. However, if for example the error is an rlang error, it will include the full stack trace.</p></li>
 <li><p>Shows and/or collects the standard output and standard error of the Docker subprocess.</p></li>
+<li><p>Executes an R script in a subprocess within a Docker container. The user specifies a directory to mount, enabling the script to interact with its contents.</p></li>
 </ul>
 </div>
 <div class="section level2">
@@ -133,16 +134,16 @@
 <span><span class="co">#&gt; Loading required package: Matrix</span></span>
 <span><span class="co">#&gt; 10 x 2 sparse Matrix of class "dgCMatrix"</span></span>
 <span><span class="co">#&gt;                   </span></span>
-<span><span class="co">#&gt;  [1,] -0.55 -0.230</span></span>
-<span><span class="co">#&gt;  [2,] -1.20  0.170</span></span>
-<span><span class="co">#&gt;  [3,]  1.70  1.100</span></span>
-<span><span class="co">#&gt;  [4,]  0.89  0.660</span></span>
-<span><span class="co">#&gt;  [5,] -0.42  0.860</span></span>
-<span><span class="co">#&gt;  [6,]  0.75  0.340</span></span>
-<span><span class="co">#&gt;  [7,] -0.28  1.100</span></span>
-<span><span class="co">#&gt;  [8,]  0.69 -1.000</span></span>
-<span><span class="co">#&gt;  [9,] -1.10  0.043</span></span>
-<span><span class="co">#&gt; [10,] -2.30 -0.220</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1,] -0.40 -0.990</span></span>
+<span><span class="co">#&gt;  [2,]  0.48  0.390</span></span>
+<span><span class="co">#&gt;  [3,]  0.66 -0.830</span></span>
+<span><span class="co">#&gt;  [4,]  0.19  0.340</span></span>
+<span><span class="co">#&gt;  [5,]  1.30  0.850</span></span>
+<span><span class="co">#&gt;  [6,]  0.35  1.500</span></span>
+<span><span class="co">#&gt;  [7,]  1.10  1.100</span></span>
+<span><span class="co">#&gt;  [8,]  0.22  0.190</span></span>
+<span><span class="co">#&gt;  [9,] -0.69 -0.014</span></span>
+<span><span class="co">#&gt; [10,]  1.80  0.240</span></span></code></pre></div>
 <p>and</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">jetty</span><span class="fu">::</span><span class="fu"><a href="reference/run.html">run</a></span><span class="op">(</span></span>
@@ -150,17 +151,17 @@
 <span>  args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>nrow <span class="op">=</span> <span class="fl">10</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; 10 x 2 sparse Matrix of class "dgCMatrix"</span></span>
-<span><span class="co">#&gt;                   </span></span>
-<span><span class="co">#&gt;  [1,]  0.027 -1.90</span></span>
-<span><span class="co">#&gt;  [2,]  0.300  0.26</span></span>
-<span><span class="co">#&gt;  [3,]  0.022  0.37</span></span>
-<span><span class="co">#&gt;  [4,] -1.100  1.30</span></span>
-<span><span class="co">#&gt;  [5,]  1.900 -0.88</span></span>
-<span><span class="co">#&gt;  [6,] -0.140 -0.43</span></span>
-<span><span class="co">#&gt;  [7,] -0.980 -1.50</span></span>
-<span><span class="co">#&gt;  [8,]  0.350  0.72</span></span>
-<span><span class="co">#&gt;  [9,] -0.350  0.69</span></span>
-<span><span class="co">#&gt; [10,]  0.870  1.00</span></span></code></pre></div>
+<span><span class="co">#&gt;                    </span></span>
+<span><span class="co">#&gt;  [1,]  0.73  0.0033</span></span>
+<span><span class="co">#&gt;  [2,]  0.62  0.6000</span></span>
+<span><span class="co">#&gt;  [3,] -1.10 -0.1600</span></span>
+<span><span class="co">#&gt;  [4,]  1.20 -0.1700</span></span>
+<span><span class="co">#&gt;  [5,]  1.40  1.0000</span></span>
+<span><span class="co">#&gt;  [6,]  1.00  0.4700</span></span>
+<span><span class="co">#&gt;  [7,] -0.74 -0.2100</span></span>
+<span><span class="co">#&gt;  [8,]  0.75  0.0940</span></span>
+<span><span class="co">#&gt;  [9,] -0.26 -1.9000</span></span>
+<span><span class="co">#&gt; [10,]  0.20 -0.3000</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="installing-required-packages">Installing required packages<a class="anchor" aria-label="anchor" href="#installing-required-packages"></a>
 </h4>
@@ -264,6 +265,26 @@
 <p>Currently jetty only supports single <code>.Rprofile</code> or <code>.Renviron</code> files. So, for example, if a user has a project-specific .Rprofile in the current working directory at <code>./.Rprofile</code> and then a user-specific .Rprofile at <code>~/.Rprofile</code>, jetty will only source <code>./.Rprofile</code> and will ignore <code>~/.Rprofile</code>. This is a feature I plan to add before long.</p>
 </div>
 </div>
+</div>
+<div class="section level2">
+<h2 id="executing-r-scripts-in-a-docker-container">Executing R scripts in a Docker container<a class="anchor" aria-label="anchor" href="#executing-r-scripts-in-a-docker-container"></a>
+</h2>
+<p>While the primary goal of jetty is to execute a function or code chunk in an R subprocess running within a Docker container, it also supports the execution of entire scripts via the <code><a href="reference/run_script.html">run_script()</a></code> function. This feature may be useful when you want to execute a script in an isolated environment such as for reproducible scientific code. It is particularly helpful when executing scripts that require specific R packages, different versions of R, or a clean environment to avoid conflicts with your system’s setup.</p>
+<p>In order to allow seamless interactions between the Docker subprocess and the local file system, the user must specify an execution context—a local directory that will be mounted into the Docker container. This context directory ensures that the script can access files within it, enabling the script to read data from or write results back to that directory. The context directory is important because it limits the script’s file access to this directory, preventing it from interacting with files outside of the specified scope.</p>
+<p>For example, suppose we are working within an R project and the script we want to execute needs access to all files within the project. We can achieve this by setting the context directory as the full project directory:</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">jetty</span><span class="fu">::</span><span class="fu"><a href="reference/run_script.html">run_script</a></span><span class="op">(</span></span>
+<span>  file <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"code/awesome_script.R"</span><span class="op">)</span>,</span>
+<span>  context <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><code><a href="reference/run_script.html">run_script()</a></code> and <code><a href="reference/run.html">run()</a></code> share a lot of functionality. For example, if the script above relies on packages that aren’t installed in the Docker container, you can instruct jetty to install these packages at runtime:</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">jetty</span><span class="fu">::</span><span class="fu"><a href="reference/run_script.html">run_script</a></span><span class="op">(</span></span>
+<span>  file <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"code/awesome_script.R"</span><span class="op">)</span>,</span>
+<span>  context <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  install_dependencies <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>All the features discussed above for synchronous, one-off R processes also apply to <code><a href="reference/run_script.html">run_script()</a></code>.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
