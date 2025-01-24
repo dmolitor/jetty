@@ -62,12 +62,16 @@ stop_if_not_installed <- function() {
   }
 }
 
-take_stock <- function(expr, install_dependencies, temp_dir, r_profile) {
+take_stock <- function(expr, install_dependencies, temp_dir, r_profile, is_expression = TRUE) {
   if (install_dependencies) {
     dependencies_rprofile <- NULL
-    temp_R <- file.path(temp_dir, "jetty.R")
-    writeLines(rlang::expr_text(expr), temp_R)
-    on.exit(if (file.exists(temp_R)) file.remove(temp_R), add = TRUE)
+    if (is_expression) {
+      temp_R <- file.path(temp_dir, "jetty.R")
+      writeLines(rlang::expr_text(expr), temp_R)
+      on.exit(if (file.exists(temp_R)) file.remove(temp_R), add = TRUE)
+    } else {
+      temp_R <- expr
+    }
     dependencies_expr <- renv::dependencies(temp_R, quiet = TRUE)$Package
     if (length(dependencies_expr) == 0) {
       dependencies_expr <- NULL
