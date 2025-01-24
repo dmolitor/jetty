@@ -5,7 +5,6 @@ test_that("utility functions work as expected", {
     regexp = "Executing command:\ndocker run -i -t --rm r-base:latest"
   )
   expect_equal(jetty_temp_dir(), "/jetty/tmp/")
-  skip_on_cran()
   expect_true(docker_installed())
   expect_null(stop_if_not_installed())
 })
