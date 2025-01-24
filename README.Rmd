@@ -51,6 +51,9 @@ the error is an rlang error, it will include the full stack trace.
 - Shows and/or collects the standard output and standard error of the Docker
 subprocess.
 
+- Executes an R script in a subprocess within a Docker container.
+The user specifies a directory to mount, enabling the script to interact with its contents.
+
 ## Installation
 
 Install jetty from CRAN:
@@ -267,3 +270,47 @@ for example, if a user has a project-specific .Rprofile in the current
 working directory at `./.Rprofile` and then a user-specific .Rprofile at
 `~/.Rprofile`, jetty will only source `./.Rprofile` and will ignore
 `~/.Rprofile`. This is a feature I plan to add before long.
+
+## Executing R scripts in a Docker container
+
+While the primary goal of jetty is to execute a function or
+code chunk in an R subprocess running within a Docker container, it also
+supports the execution of entire scripts via the `run_script()` function. This
+feature may be useful when you want to execute a script in an isolated
+environment such as for reproducible scientific code. It is particularly
+helpful when executing scripts that require specific R packages,
+different versions of R, or a clean environment to avoid conflicts with your
+system's setup.
+
+In order to allow seamless interactions between the Docker subprocess
+and the local file system, the user must specify an execution context—a
+local directory that will be mounted into the Docker container. This
+context directory ensures that the script can access files within it, enabling
+the script to read data from or write results back to that directory.
+The context directory is important because it limits the script's file access to this
+directory, preventing it from interacting with files outside of the
+specified scope.
+
+For example, suppose we are working within an R project and the script we want
+to execute needs access to all files within the project. We
+can achieve this by setting the context directory as the full project directory:
+```{r, eval = FALSE}
+jetty::run_script(
+  file = here::here("code/awesome_script.R"),
+  context = here::here()
+)
+```
+
+`run_script()` and `run()` share a lot of functionality. For example,
+if the script above relies on packages that aren't installed in the Docker
+container, you can instruct jetty to install these packages
+at runtime:
+```{r, eval = FALSE}
+jetty::run_script(
+  file = here::here("code/awesome_script.R"),
+  context = here::here(),
+  install_dependencies = TRUE
+)
+```
+
+All the features discussed above for synchronous, one-off R processes also apply to `run_script()`.
