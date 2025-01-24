@@ -67,8 +67,8 @@ This function is somewhat similar in spirit to
 an R script to be executed within the context of a Docker container.
 }
 \details{
-*NOTE*: this is still pretty experimental. This will **NOT** work on
-Windows. It is only made to be compatible with MacOS and Linux.
+\bold{NOTE}: this feature is still fairly experimental. It will \emph{NOT}
+work on Windows. It is only made to be compatible with MacOS and Linux.
 }
 \section{Interaction with the local file system}{
 

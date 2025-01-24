@@ -4,8 +4,8 @@
 #' \code{callr::rscript()} in that the user can specify
 #' an R script to be executed within the context of a Docker container.
 #' 
-#' *NOTE*: this is still pretty experimental. This will **NOT** work on
-#' Windows. It is only made to be compatible with MacOS and Linux.
+#' \bold{NOTE}: this feature is still fairly experimental. It will \emph{NOT}
+#' work on Windows. It is only made to be compatible with MacOS and Linux.
 #'
 #' @section Interaction with the local file system:
 #' 
@@ -146,5 +146,5 @@ run_script <- function(
   out <- docker_command(args = cmd_args, stdout = stdout, stderr = stderr)
   result <- readRDS(temp_out_local)
   handle_error(result)
-  result$value
+  invisible(result$value)
 }
