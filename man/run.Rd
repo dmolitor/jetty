@@ -11,8 +11,8 @@ run(
   stdout = "",
   stderr = "",
   install_dependencies = FALSE,
-  r_profile = file.path(getwd(), ".Rprofile"),
-  r_environ = file.path(getwd(), ".Renviron"),
+  r_profile = jetty_r_profile(),
+  r_environ = jetty_r_environ(),
   debug = FALSE
 )
 }
@@ -29,10 +29,13 @@ Docker image or an image available on DockerHub. Default image is
 \code{r-base:{jetty:::r_version()}} where your R version is determined from
 your local R session.}
 
-\item{stdout, stderr}{Where output to ‘stdout’ or ‘stderr’ should be sent.
-Possible values are "" (send to the R console; the default), NULL or FALSE
-(discard output), TRUE (capture the output in a character vector) or a
-character string naming a file. See \code{\link{system2}} for more details.}
+\item{stdout, stderr}{where output to ‘stdout’ or ‘stderr’ should be sent.
+Possible values are "", to the R console (the default), NULL
+(discard output), FALSE (discard output), TRUE
+(capture the output silently and then discard), or a
+character string naming a file. See \code{\link{system2}} which this
+function uses under the hood; however, note that \code{\link{system2}}
+handles these options slightly differently.}
 
 \item{install_dependencies}{A boolean indicating whether jetty should
 discover packages used in your code and try to install them in the
@@ -45,7 +48,11 @@ the .Rprofile and .Renviron files to transfer to the Docker sub-process.
 By default jetty will look for files called ".Rprofile" and ".Renviron"
 in the current working directory. If either file is found, they will be
 transferred to the Docker sub-process and loaded before executing any
-R commands.}
+R commands. To explicitly exclude either file, set the value to `NULL`.
+Alternatively, to exclude either file for all jetty function calls,
+set the `JETTY_IGNORE_RPROFILE`/`JETTY_IGNORE_RENVIRON` environment
+variable(s) to one of `c(TRUE, "T")` or set the R option(s)
+`jetty.ignore.rprofile`/`jetty.ignore.renviron` to `TRUE`.}
 
 \item{debug}{A boolean indicating whether to print out the commands that are
 being executed via the shell. This is mostly helpful to see what is
@@ -113,6 +120,9 @@ run(
 
 # This will error since the `praise` package is not installed
 run(function() praise::praise())
+
+# Explicitly tell jetty to ignore an existing .Rprofile
+run(function() summary(cars), r_profile = NULL)
 }
 
 }

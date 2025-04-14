@@ -1,4 +1,4 @@
-command_shell_prep <- function(expr, rprof, renv, temp_out, temp_in, dependencies) {
+command_shell_prep <- function(expr, rprof, renv, temp_out, temp_in, dependencies, context = NULL) {
   expr <- rlang::enexpr(expr)
   expr <- rlang::expr_text(expr)
   expr <- paste0(
@@ -13,6 +13,7 @@ command_shell_prep <- function(expr, rprof, renv, temp_out, temp_in, dependencie
     } else {
       dependencies
     },
+    if (!is.null(context)) paste0("\n", "setwd('", context, "')") else context,
     if (!is.null(rprof)) paste0("\n", rprof) else rprof,
     if (!is.null(renv)) paste0("\n", renv) else renv,
     "\njetty_output <- ",
@@ -38,9 +39,12 @@ command_shell_prep <- function(expr, rprof, renv, temp_out, temp_in, dependencie
 # @param args A single argument or vector of arguments to pass
 #   to \code{\link{system2}}.
 # @param stdout,stderr where output to ‘stdout’ or ‘stderr’ should be sent.
-#   Possible values are "", to the R console (the default), NULL or FALSE
-#   (discard output), TRUE (capture the output in a character vector) or a
-#   character string naming a file. See \code{\link{system2}} for more details.
+#   Possible values are "", to the R console (the default), NULL
+#   (discard output), FALSE (discard output), TRUE
+#   (capture the output silently and then discard), or a
+#   character string naming a file. See \code{\link{system2}} which this
+#   function uses under the hood; however, note that \code{\link{system2}}
+#   handles these options slightly differently.
 # @param ... Additional arguments to pass directly to \code{\link{system2}}.
 # @return The output of the given command as a string.
 # @examples
@@ -51,8 +55,15 @@ command_shell_prep <- function(expr, rprof, renv, temp_out, temp_in, dependencie
 docker_command <- function(args, stdout = "", stderr = "", ...) {
   stop_if_not_installed()
   cmd <- suppressWarnings(system2("docker", args = args, stdout = stdout, stderr = stderr, ...))
-  status <- attr(cmd, "status")
-  if (length(status) > 0 && status > 0) {
+  if (isTRUE(stdout) || isTRUE(stderr)) {
+    status <- attr(cmd, "status")
+    if (is.null(status)) {
+      status <- 0
+    }
+  } else {
+    status <- cmd
+  }
+  if (status > 0) {
     cmd <- paste("docker", paste(args, collapse = " "))
     rlang::abort(
       class = "docker_cmd_error",
@@ -60,7 +71,7 @@ docker_command <- function(args, stdout = "", stderr = "", ...) {
         "Docker command exited with non-zero status",
         "i" = paste0("Status: ", status)
       ),
-      data = status
+      data = cmd
     )
   }
   cmd
@@ -107,10 +118,13 @@ docker_command <- function(args, stdout = "", stderr = "", ...) {
 #'   Docker image or an image available on DockerHub. Default image is
 #'   \code{r-base:{jetty:::r_version()}} where your R version is determined from
 #'   your local R session.
-#' @param stdout,stderr Where output to ‘stdout’ or ‘stderr’ should be sent.
-#'   Possible values are "" (send to the R console; the default), NULL or FALSE
-#'   (discard output), TRUE (capture the output in a character vector) or a
-#'   character string naming a file. See \code{\link{system2}} for more details.
+#' @param stdout,stderr where output to ‘stdout’ or ‘stderr’ should be sent.
+#'   Possible values are "", to the R console (the default), NULL
+#'   (discard output), FALSE (discard output), TRUE
+#'   (capture the output silently and then discard), or a
+#'   character string naming a file. See \code{\link{system2}} which this
+#'   function uses under the hood; however, note that \code{\link{system2}}
+#'   handles these options slightly differently.
 #' @param install_dependencies A boolean indicating whether jetty should
 #'   discover packages used in your code and try to install them in the
 #'   Docker container prior to executing the provided function/expression.
@@ -121,7 +135,11 @@ docker_command <- function(args, stdout = "", stderr = "", ...) {
 #'   By default jetty will look for files called ".Rprofile" and ".Renviron"
 #'   in the current working directory. If either file is found, they will be
 #'   transferred to the Docker sub-process and loaded before executing any
-#'   R commands.
+#'   R commands. To explicitly exclude either file, set the value to `NULL`.
+#'   Alternatively, to exclude either file for all jetty function calls,
+#'   set the `JETTY_IGNORE_RPROFILE`/`JETTY_IGNORE_RENVIRON` environment
+#'   variable(s) to one of `c(TRUE, "T")` or set the R option(s)
+#'   `jetty.ignore.rprofile`/`jetty.ignore.renviron` to `TRUE`.
 #' @param debug A boolean indicating whether to print out the commands that are
 #'   being executed via the shell. This is mostly helpful to see what is
 #'   happening when things start to error.
@@ -151,6 +169,9 @@ docker_command <- function(args, stdout = "", stderr = "", ...) {
 #' 
 #' # This will error since the `praise` package is not installed
 #' run(function() praise::praise())
+#' 
+#' # Explicitly tell jetty to ignore an existing .Rprofile
+#' run(function() summary(cars), r_profile = NULL)
 #' }
 #'
 #' @export
@@ -161,8 +182,8 @@ run <- function(
   stdout = "",
   stderr = "",
   install_dependencies = FALSE,
-  r_profile = file.path(getwd(), ".Rprofile"),
-  r_environ = file.path(getwd(), ".Renviron"),
+  r_profile = jetty_r_profile(),
+  r_environ = jetty_r_environ(),
   debug = FALSE
 ) {
   check_args(args)

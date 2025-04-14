@@ -7,4 +7,5 @@ test_that("utility functions work as expected", {
   expect_equal(jetty_temp_dir(), "/jetty/tmp/")
   expect_true(docker_installed())
   expect_null(stop_if_not_installed())
+  expect_true(all(vapply(prof_env_bindmounts(NULL, NULL), is.null, FUN.VALUE = logical(1))))
 })

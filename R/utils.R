@@ -28,19 +28,43 @@ handle_error <- function(x) {
   invisible(x)
 }
 
+jetty_r_environ <- function() {
+  env_var <- as.logical(Sys.getenv("JETTY_IGNORE_RENVIRON"))
+  opt_var <- getOption("jetty.ignore.renviron")
+  if (!isTRUE(env_var) && !isTRUE(opt_var)) {
+    return(file.path(getwd(), ".Renviron"))
+  } else {
+    return(NULL)
+  }
+}
+
+jetty_r_profile <- function() {
+  env_var <- as.logical(Sys.getenv("JETTY_IGNORE_RPROFILE"))
+  opt_var <- getOption("jetty.ignore.rprofile")
+  if (!isTRUE(env_var) && !isTRUE(opt_var)) {
+    return(file.path(getwd(), ".Rprofile"))
+  } else {
+    return(NULL)
+  }
+}
+
 jetty_temp_dir <- function() "/jetty/tmp/"
 
 prof_env_bindmounts <- function(r_profile, r_environ) {
-  r_profile <- normalizePath(r_profile, mustWork = FALSE)
-  r_environ <- normalizePath(r_environ, mustWork = FALSE)
   r_prof_mount <- r_env_mount <- r_prof_load <- r_env_load <- NULL
-  if (file.exists(r_profile)) {
-    r_prof_mount <- paste0("-v ", r_profile, ":", "/jetty/.Rprofile")
-    r_prof_load <- "source('/jetty/.Rprofile')"
-  } 
-  if (file.exists(r_environ)) {
-    r_env_mount <- paste0("-v ", r_environ, ":", "/jetty/.Renviron")
-    r_env_load <- "readRenviron('/jetty/.Renviron')"
+  if (!is.null(r_profile)) {
+    r_profile <- normalizePath(r_profile, mustWork = FALSE)
+    if (file.exists(r_profile)) {
+      r_prof_mount <- paste0("-v ", r_profile, ":", "/jetty/.Rprofile")
+      r_prof_load <- "source('/jetty/.Rprofile')"
+    } 
+  }
+  if (!is.null(r_environ)) {
+    r_environ <- normalizePath(r_environ, mustWork = FALSE)
+    if (file.exists(r_environ)) {
+      r_env_mount <- paste0("-v ", r_environ, ":", "/jetty/.Renviron")
+      r_env_load <- "readRenviron('/jetty/.Renviron')"
+    }
   }
   return(list(r_prof_mount, r_env_mount, r_prof_load, r_env_load))
 }
@@ -76,7 +100,7 @@ take_stock <- function(expr, install_dependencies, temp_dir, r_profile, is_expre
     if (length(dependencies_expr) == 0) {
       dependencies_expr <- NULL
     }
-    if (file.exists(r_profile)) {
+    if (!is.null(r_profile) && file.exists(r_profile)) {
       dependencies_rprofile <- renv::dependencies(r_profile, quiet = TRUE)$Package
       if (length(dependencies_rprofile) == 0) {
         dependencies_rprofile <- NULL

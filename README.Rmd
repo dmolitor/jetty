@@ -18,6 +18,10 @@ knitr::opts_chunk$set(
   out.width = "80%",
   dpi = 300
 )
+
+# Explicitly ignore any existing .Rprofile or .Renviron files
+options("jetty.ignore.rprofile" = TRUE)
+options("jetty.ignore.renviron" = TRUE)
 ```
 
 # jetty <img src='man/figures/logo-no-bg.png' align="right" height="139"/>
@@ -157,7 +161,7 @@ jetty::run(
       ggplot2::geom_point()
   },
   install_dependencies = TRUE,
-  stdout = TRUE
+  stdout = FALSE
 )
 ```
 
@@ -195,7 +199,7 @@ jetty::run({for (i in 1:5) message(paste0("iter", i)); TRUE})
 #> [1] TRUE
 ```
 
-But you can discard this output by setting `stdout = FALSE`:
+But you can discard this output by setting `stdout` to one of `c(FALSE, TRUE, NULL)`:
 ```{r, eval = FALSE, message = TRUE}
 jetty::run({for (i in 1:5) message(paste0("iter", i)); TRUE}, stdout = FALSE)
 #> [1] TRUE
@@ -261,6 +265,28 @@ four <- jetty::run(
   \() 2 + 2,
   r_profile = here::here("man/scaffolding/.Rprofile")
 )
+```
+
+#### Ignoring .Rprofile and .Renviron files
+
+If the user wants to explicitly ignore an existing `.Rprofile` or
+`.Renviron` file in the current working directory, it's as simple as setting
+the `r_profile = NULL` and `r_environ = NULL`:
+```{r}
+four <- jetty::run(\() 2 + 2, r_profile = NULL, r_environ = NULL)
+```
+
+If the user wants to ignore these files for all jetty function calls, they can
+do so by setting the following system environment variables:
+```{r, eval=FALSE}
+Sys.setenv("JETTY_IGNORE_RPROFILE" = TRUE)
+Sys.setenv("JETTY_IGNORE_RENVIRON" = TRUE)
+```
+
+or, equivalently, the following R options:
+```{r, eval=FALSE}
+options("jetty.ignore.rprofile" = TRUE)
+options("jetty.ignore.renviron" = TRUE)
 ```
 
 #### Multiple .Rprofile or .Renviron files

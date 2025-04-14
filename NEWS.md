@@ -1,3 +1,11 @@
+# jetty 0.2.1
+
+* Improves error messages if the underlying Docker process throws an error.
+* Allows the user greater control over .Renviron and .Rprofile files:
+    - Allows users to explicitly ignore these files by setting the arguments
+      `r_profile = NULL` or `r_environ = NULL`.
+    - Allows users to ignore these via environment variables or R options.
+
 # jetty 0.2.0
 
 - **Execute an R script in a Docker container**:

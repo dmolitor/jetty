@@ -26,14 +26,16 @@ test_that("jetty handles the `run_script` context as expected", {
     object = run_script(
       file = here::here("man", "scaffolding", "test_script_advanced.R"),
       stdout = FALSE,
-      install_dependencies = TRUE
+      install_dependencies = TRUE,
+      r_profile = NULL
     )
   )
   out <- run_script(
     file = here::here("man", "scaffolding", "test_script_advanced.R"),
     context = here::here(),
     stdout = FALSE,
-    install_dependencies = TRUE
+    install_dependencies = TRUE,
+    r_profile = NULL
   )
   expect_identical(
     confint(readRDS(here::here("man", "scaffolding", "mtcars_lm.Rds"))),

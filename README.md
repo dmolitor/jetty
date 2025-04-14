@@ -133,16 +133,16 @@ jetty::run(
 #> Loading required package: Matrix
 #> 10 x 2 sparse Matrix of class "dgCMatrix"
 #>                   
-#>  [1,] -0.40 -0.990
-#>  [2,]  0.48  0.390
-#>  [3,]  0.66 -0.830
-#>  [4,]  0.19  0.340
-#>  [5,]  1.30  0.850
-#>  [6,]  0.35  1.500
-#>  [7,]  1.10  1.100
-#>  [8,]  0.22  0.190
-#>  [9,] -0.69 -0.014
-#> [10,]  1.80  0.240
+#>  [1,]  0.430 -0.17
+#>  [2,] -0.190 -0.57
+#>  [3,] -0.280 -0.30
+#>  [4,]  0.720  0.37
+#>  [5,]  0.051  0.21
+#>  [6,]  0.630  0.72
+#>  [7,]  0.130 -0.74
+#>  [8,] -0.700  1.70
+#>  [9,] -0.420  1.70
+#> [10,] -0.430 -1.50
 ```
 
 and
@@ -154,16 +154,16 @@ jetty::run(
 )
 #> 10 x 2 sparse Matrix of class "dgCMatrix"
 #>                    
-#>  [1,]  0.73  0.0033
-#>  [2,]  0.62  0.6000
-#>  [3,] -1.10 -0.1600
-#>  [4,]  1.20 -0.1700
-#>  [5,]  1.40  1.0000
-#>  [6,]  1.00  0.4700
-#>  [7,] -0.74 -0.2100
-#>  [8,]  0.75  0.0940
-#>  [9,] -0.26 -1.9000
-#> [10,]  0.20 -0.3000
+#>  [1,]  0.021 -0.056
+#>  [2,]  0.560 -0.290
+#>  [3,]  0.280 -1.700
+#>  [4,] -0.480  0.710
+#>  [5,]  0.570 -0.710
+#>  [6,]  0.110  0.630
+#>  [7,] -0.340  0.890
+#>  [8,] -0.870  0.092
+#>  [9,] -0.160  0.490
+#> [10,] -1.300 -0.280
 ```
 
 #### Installing required packages
@@ -193,7 +193,7 @@ jetty::run(
       ggplot2::geom_point()
   },
   install_dependencies = TRUE,
-  stdout = TRUE
+  stdout = FALSE
 )
 ```
 
@@ -238,7 +238,8 @@ jetty::run({for (i in 1:5) message(paste0("iter", i)); TRUE})
 #> [1] TRUE
 ```
 
-But you can discard this output by setting `stdout = FALSE`:
+But you can discard this output by setting `stdout` to one of
+`c(FALSE, TRUE, NULL)`:
 
 ``` r
 jetty::run({for (i in 1:5) message(paste0("iter", i)); TRUE}, stdout = FALSE)
@@ -309,6 +310,31 @@ four <- jetty::run(
   r_profile = here::here("man/scaffolding/.Rprofile")
 )
 #> Error in loadNamespace(x): there is no package called ‘praise’
+```
+
+#### Ignoring .Rprofile and .Renviron files
+
+If the user wants to explicitly ignore an existing `.Rprofile` or
+`.Renviron` file in the current working directory, it’s as simple as
+setting the `r_profile = NULL` and `r_environ = NULL`:
+
+``` r
+four <- jetty::run(\() 2 + 2, r_profile = NULL, r_environ = NULL)
+```
+
+If the user wants to ignore these files for all jetty function calls,
+they can do so by setting the following system environment variables:
+
+``` r
+Sys.setenv("JETTY_IGNORE_RPROFILE" = TRUE)
+Sys.setenv("JETTY_IGNORE_RENVIRON" = TRUE)
+```
+
+or, equivalently, the following R options:
+
+``` r
+options("jetty.ignore.rprofile" = TRUE)
+options("jetty.ignore.renviron" = TRUE)
 ```
 
 #### Multiple .Rprofile or .Renviron files
