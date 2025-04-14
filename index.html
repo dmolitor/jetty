@@ -23,7 +23,7 @@
 
     <a class="navbar-brand me-2" href="index.html">jetty</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -134,16 +134,16 @@
 <span><span class="co">#&gt; Loading required package: Matrix</span></span>
 <span><span class="co">#&gt; 10 x 2 sparse Matrix of class "dgCMatrix"</span></span>
 <span><span class="co">#&gt;                   </span></span>
-<span><span class="co">#&gt;  [1,] -0.40 -0.990</span></span>
-<span><span class="co">#&gt;  [2,]  0.48  0.390</span></span>
-<span><span class="co">#&gt;  [3,]  0.66 -0.830</span></span>
-<span><span class="co">#&gt;  [4,]  0.19  0.340</span></span>
-<span><span class="co">#&gt;  [5,]  1.30  0.850</span></span>
-<span><span class="co">#&gt;  [6,]  0.35  1.500</span></span>
-<span><span class="co">#&gt;  [7,]  1.10  1.100</span></span>
-<span><span class="co">#&gt;  [8,]  0.22  0.190</span></span>
-<span><span class="co">#&gt;  [9,] -0.69 -0.014</span></span>
-<span><span class="co">#&gt; [10,]  1.80  0.240</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1,]  0.430 -0.17</span></span>
+<span><span class="co">#&gt;  [2,] -0.190 -0.57</span></span>
+<span><span class="co">#&gt;  [3,] -0.280 -0.30</span></span>
+<span><span class="co">#&gt;  [4,]  0.720  0.37</span></span>
+<span><span class="co">#&gt;  [5,]  0.051  0.21</span></span>
+<span><span class="co">#&gt;  [6,]  0.630  0.72</span></span>
+<span><span class="co">#&gt;  [7,]  0.130 -0.74</span></span>
+<span><span class="co">#&gt;  [8,] -0.700  1.70</span></span>
+<span><span class="co">#&gt;  [9,] -0.420  1.70</span></span>
+<span><span class="co">#&gt; [10,] -0.430 -1.50</span></span></code></pre></div>
 <p>and</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">jetty</span><span class="fu">::</span><span class="fu"><a href="reference/run.html">run</a></span><span class="op">(</span></span>
@@ -152,16 +152,16 @@
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; 10 x 2 sparse Matrix of class "dgCMatrix"</span></span>
 <span><span class="co">#&gt;                    </span></span>
-<span><span class="co">#&gt;  [1,]  0.73  0.0033</span></span>
-<span><span class="co">#&gt;  [2,]  0.62  0.6000</span></span>
-<span><span class="co">#&gt;  [3,] -1.10 -0.1600</span></span>
-<span><span class="co">#&gt;  [4,]  1.20 -0.1700</span></span>
-<span><span class="co">#&gt;  [5,]  1.40  1.0000</span></span>
-<span><span class="co">#&gt;  [6,]  1.00  0.4700</span></span>
-<span><span class="co">#&gt;  [7,] -0.74 -0.2100</span></span>
-<span><span class="co">#&gt;  [8,]  0.75  0.0940</span></span>
-<span><span class="co">#&gt;  [9,] -0.26 -1.9000</span></span>
-<span><span class="co">#&gt; [10,]  0.20 -0.3000</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1,]  0.021 -0.056</span></span>
+<span><span class="co">#&gt;  [2,]  0.560 -0.290</span></span>
+<span><span class="co">#&gt;  [3,]  0.280 -1.700</span></span>
+<span><span class="co">#&gt;  [4,] -0.480  0.710</span></span>
+<span><span class="co">#&gt;  [5,]  0.570 -0.710</span></span>
+<span><span class="co">#&gt;  [6,]  0.110  0.630</span></span>
+<span><span class="co">#&gt;  [7,] -0.340  0.890</span></span>
+<span><span class="co">#&gt;  [8,] -0.870  0.092</span></span>
+<span><span class="co">#&gt;  [9,] -0.160  0.490</span></span>
+<span><span class="co">#&gt; [10,] -1.300 -0.280</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="installing-required-packages">Installing required packages<a class="anchor" aria-label="anchor" href="#installing-required-packages"></a>
 </h4>
@@ -182,7 +182,7 @@
 <span>      <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span></span>
 <span>  <span class="op">}</span>,</span>
 <span>  install_dependencies <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  stdout <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  stdout <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-11-1.png" width="80%"></p>
 <p><strong>Note</strong>: this feature uses <a href="https://rstudio.github.io/renv/reference/dependencies.html" class="external-link"><code>renv::dependencies</code></a> to discover the required packages, and won’t handle all possible scenarios. In particular, it won’t install specific package versions (just the latest version) and it will only install packages that are on CRAN. Use this with care!</p>
@@ -209,7 +209,7 @@
 <span><span class="co">#&gt; iter4</span></span>
 <span><span class="co">#&gt; iter5</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
-<p>But you can discard this output by setting <code>stdout = FALSE</code>:</p>
+<p>But you can discard this output by setting <code>stdout</code> to one of <code>c(FALSE, TRUE, NULL)</code>:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">jetty</span><span class="fu">::</span><span class="fu"><a href="reference/run.html">run</a></span><span class="op">(</span><span class="op">{</span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"iter"</span>, <span class="va">i</span><span class="op">)</span><span class="op">)</span>; <span class="cn">TRUE</span><span class="op">}</span>, stdout <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
@@ -260,6 +260,21 @@
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Error in loadNamespace(x): there is no package called ‘praise’</span></span></code></pre></div>
 <div class="section level4">
+<h4 id="ignoring-rprofile-and-renviron-files">Ignoring .Rprofile and .Renviron files<a class="anchor" aria-label="anchor" href="#ignoring-rprofile-and-renviron-files"></a>
+</h4>
+<p>If the user wants to explicitly ignore an existing <code>.Rprofile</code> or <code>.Renviron</code> file in the current working directory, it’s as simple as setting the <code>r_profile = NULL</code> and <code>r_environ = NULL</code>:</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">four</span> <span class="op">&lt;-</span> <span class="fu">jetty</span><span class="fu">::</span><span class="fu"><a href="reference/run.html">run</a></span><span class="op">(</span>\<span class="op">(</span><span class="op">)</span> <span class="fl">2</span> <span class="op">+</span> <span class="fl">2</span>, r_profile <span class="op">=</span> <span class="cn">NULL</span>, r_environ <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+<p>If the user wants to ignore these files for all jetty function calls, they can do so by setting the following system environment variables:</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span><span class="st">"JETTY_IGNORE_RPROFILE"</span> <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span><span class="st">"JETTY_IGNORE_RENVIRON"</span> <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p>or, equivalently, the following R options:</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span><span class="st">"jetty.ignore.rprofile"</span> <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span><span class="st">"jetty.ignore.renviron"</span> <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level4">
 <h4 id="multiple-rprofile-or-renviron-files">Multiple .Rprofile or .Renviron files<a class="anchor" aria-label="anchor" href="#multiple-rprofile-or-renviron-files"></a>
 </h4>
 <p>Currently jetty only supports single <code>.Rprofile</code> or <code>.Renviron</code> files. So, for example, if a user has a project-specific .Rprofile in the current working directory at <code>./.Rprofile</code> and then a user-specific .Rprofile at <code>~/.Rprofile</code>, jetty will only source <code>./.Rprofile</code> and will ignore <code>~/.Rprofile</code>. This is a feature I plan to add before long.</p>
@@ -272,13 +287,13 @@
 <p>While the primary goal of jetty is to execute a function or code chunk in an R subprocess running within a Docker container, it also supports the execution of entire scripts via the <code><a href="reference/run_script.html">run_script()</a></code> function. This feature may be useful when you want to execute a script in an isolated environment such as for reproducible scientific code. It is particularly helpful when executing scripts that require specific R packages, different versions of R, or a clean environment to avoid conflicts with your system’s setup.</p>
 <p>In order to allow seamless interactions between the Docker subprocess and the local file system, the user must specify an execution context—a local directory that will be mounted into the Docker container. This context directory ensures that the script can access files within it, enabling the script to read data from or write results back to that directory. The context directory is important because it limits the script’s file access to this directory, preventing it from interacting with files outside of the specified scope.</p>
 <p>For example, suppose we are working within an R project and the script we want to execute needs access to all files within the project. We can achieve this by setting the context directory as the full project directory:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">jetty</span><span class="fu">::</span><span class="fu"><a href="reference/run_script.html">run_script</a></span><span class="op">(</span></span>
 <span>  file <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"code/awesome_script.R"</span><span class="op">)</span>,</span>
 <span>  context <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><code><a href="reference/run_script.html">run_script()</a></code> and <code><a href="reference/run.html">run()</a></code> share a lot of functionality. For example, if the script above relies on packages that aren’t installed in the Docker container, you can instruct jetty to install these packages at runtime:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">jetty</span><span class="fu">::</span><span class="fu"><a href="reference/run_script.html">run_script</a></span><span class="op">(</span></span>
 <span>  file <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"code/awesome_script.R"</span><span class="op">)</span>,</span>
 <span>  context <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="op">)</span>,</span>

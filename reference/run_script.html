@@ -11,7 +11,7 @@ an R script to be executed within the context of a Docker container."><meta prop
 
     <a class="navbar-brand me-2" href="../index.html">jetty</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,7 +32,7 @@ an R script to be executed within the context of a Docker container."><meta prop
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Execute an R script inside a Docker container</h1>
-      <small class="dont-index">Source: <a href="https://github.com/dmolitor/jetty/blob/v0.2.0/R/script.R" class="external-link"><code>R/script.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/dmolitor/jetty/blob/main/R/script.R" class="external-link"><code>R/script.R</code></a></small>
       <div class="d-none name"><code>run_script.Rd</code></div>
     </div>
 
@@ -52,8 +52,8 @@ an R script to be executed within the context of a Docker container.</p>
 <span>  stdout <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  stderr <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  install_dependencies <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  r_profile <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">".Rprofile"</span><span class="op">)</span>,</span>
-<span>  r_environ <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">".Renviron"</span><span class="op">)</span>,</span>
+<span>  r_profile <span class="op">=</span> <span class="fu">jetty_r_profile</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  r_environ <span class="op">=</span> <span class="fu">jetty_r_environ</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  debug <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -89,10 +89,13 @@ your local R session.</p></dd>
 
 
 <dt id="arg-stdout-stderr">stdout, stderr<a class="anchor" aria-label="anchor" href="#arg-stdout-stderr"></a></dt>
-<dd><p>Where output to ‘stdout’ or ‘stderr’ should be sent.
-Possible values are "" (send to the R console; the default), NULL or FALSE
-(discard output), TRUE (capture the output in a character vector) or a
-character string naming a file. See <code><a href="https://rdrr.io/r/base/system2.html" class="external-link">system2</a></code> for more details.</p></dd>
+<dd><p>where output to ‘stdout’ or ‘stderr’ should be sent.
+Possible values are "", to the R console (the default), NULL
+(discard output), FALSE (discard output), TRUE
+(capture the output silently and then discard), or a
+character string naming a file. See <code><a href="https://rdrr.io/r/base/system2.html" class="external-link">system2</a></code> which this
+function uses under the hood; however, note that <code><a href="https://rdrr.io/r/base/system2.html" class="external-link">system2</a></code>
+handles these options slightly differently.</p></dd>
 
 
 <dt id="arg-install-dependencies">install_dependencies<a class="anchor" aria-label="anchor" href="#arg-install-dependencies"></a></dt>
@@ -109,7 +112,11 @@ the .Rprofile and .Renviron files to transfer to the Docker sub-process.
 By default jetty will look for files called ".Rprofile" and ".Renviron"
 in the current working directory. If either file is found, they will be
 transferred to the Docker sub-process and loaded before executing any
-R commands.</p></dd>
+R commands. To explicitly exclude either file, set the value to `NULL`.
+Alternatively, to exclude either file for all jetty function calls,
+set the `JETTY_IGNORE_RPROFILE`/`JETTY_IGNORE_RENVIRON` environment
+variable(s) to one of `c(TRUE, "T")` or set the R option(s)
+`jetty.ignore.rprofile`/`jetty.ignore.renviron` to `TRUE`.</p></dd>
 
 
 <dt id="arg-debug">debug<a class="anchor" aria-label="anchor" href="#arg-debug"></a></dt>
@@ -166,6 +173,12 @@ all files needed for the script to run.</p>
 <span class="r-in"><span>  file <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"code/analysis_script.R"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  context <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  install_dependencies <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Execute a script and explicitly ignore an existing .Rprofile</span></span></span>
+<span class="r-in"><span><span class="fu">run_script</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  file <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"code/analysis_script.R"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  r_profile <span class="op">=</span> <span class="cn">NULL</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
