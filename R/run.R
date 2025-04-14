@@ -135,11 +135,12 @@ docker_command <- function(args, stdout = "", stderr = "", ...) {
 #'   By default jetty will look for files called ".Rprofile" and ".Renviron"
 #'   in the current working directory. If either file is found, they will be
 #'   transferred to the Docker sub-process and loaded before executing any
-#'   R commands. To explicitly exclude either file, set the value to `NULL`.
-#'   Alternatively, to exclude either file for all jetty function calls,
-#'   set the `JETTY_IGNORE_RPROFILE`/`JETTY_IGNORE_RENVIRON` environment
-#'   variable(s) to one of `c(TRUE, "T")` or set the R option(s)
-#'   `jetty.ignore.rprofile`/`jetty.ignore.renviron` to `TRUE`.
+#'   R commands. To explicitly exclude either file, set the value to
+#'   \code{NULL}. Alternatively, to exclude either file for all jetty function
+#'   calls, set the \code{JETTY_IGNORE_RPROFILE}/\code{JETTY_IGNORE_RENVIRON}
+#'   environment variable(s) to one of \code{c(TRUE, "T")} or set the R
+#'   option(s) \code{jetty.ignore.rprofile}/\code{jetty.ignore.renviron}
+#'   \code{TRUE}.
 #' @param debug A boolean indicating whether to print out the commands that are
 #'   being executed via the shell. This is mostly helpful to see what is
 #'   happening when things start to error.
