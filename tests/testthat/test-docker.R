@@ -12,9 +12,9 @@ test_that("jetty executes commands and gets expected results", {
   skip_on_cran()
 
   # lm test
-  expect_s3_class(jetty::run({ lm(mpg ~ ., data = mtcars) }, image = "r-base:latest", r_profile = NULL), class = "lm")
-  expect_s3_class(jetty::run(function(d) lm(mpg ~ ., data = d), args = list(d = mtcars), image = "r-base:latest", r_profile = NULL), class = "lm")
-  expect_error(jetty::run(function(d) lm(mpg ~ ., data = d), args = c(mtcars), image = "r-base:latest", r_profile = NULL))
+  expect_s3_class(jetty::run({ lm(mpg ~ ., data = mtcars) }, r_profile = NULL), class = "lm")
+  expect_s3_class(jetty::run(function(d) lm(mpg ~ ., data = d), args = list(d = mtcars), r_profile = NULL), class = "lm")
+  expect_error(jetty::run(function(d) lm(mpg ~ ., data = d), args = c(mtcars), r_profile = NULL))
 
   # using a package (Matrix)
   expect_equal(
@@ -22,7 +22,7 @@ test_that("jetty executes commands and gets expected results", {
       library(Matrix)
       set.seed(123)
       rsparsematrix(10, 10, density = 1)
-    }, image = "r-base:latest", r_profile = NULL),
+    }, r_profile = NULL),
     expected = {
       set.seed(123)
       library(Matrix)
@@ -36,13 +36,12 @@ test_that("jetty executes commands and gets expected results", {
       library(Matrix)
       set.seed(123)
       rsparsematrix(10, 10, density = 1)
-    }, image = "r-base:latest", r_profile = NULL),
+    }, r_profile = NULL),
     expected = jetty::run({
       set.seed(123)
       function(ncol) Matrix::rsparsematrix(10, ncol, 1)
     },
-    args = list(ncol = 10), 
-    image = "r-base:latest",
+    args = list(ncol = 10),
     r_profile = NULL)
   )
 
@@ -55,7 +54,6 @@ test_that("jetty executes commands and gets expected results", {
         ggplot2::theme_minimal()
     },
     install_dependencies = TRUE,
-    image = "r-base:latest",
     r_profile = NULL
   )
   expect_s3_class(plt, class = c("gg", "ggplot"))
@@ -69,15 +67,14 @@ test_that("jetty correctly loads existing .Rprofile and .Renviron", {
     func = function() { var(mycars) },
     install_dependencies = TRUE,
     r_profile = here::here("man/scaffolding/.Rprofile"),
-    r_environ = here::here("man/scaffolding/.Renviron"),
-    image = "r-base:latest"
+    r_environ = here::here("man/scaffolding/.Renviron")
   )
   expect_equal(out, var(cars))
   expect_equal(
     jetty::run(
       func = function() { Sys.getenv("JETTY_TEST") },
-      r_environ = here::here("man/scaffolding/.Renviron"),
-      image = "r-base:latest"
+      r_profile = NULL,
+      r_environ = here::here("man/scaffolding/.Renviron")
     ),
     "123abc456"
   )
@@ -85,8 +82,7 @@ test_that("jetty correctly loads existing .Rprofile and .Renviron", {
     jetty::run(
       func = function() { var(mycars) },
       r_profile = here::here("man/scaffolding/.Rprofile"),
-      r_environ = here::here("man/scaffolding/.Renviron"),
-      image = "r-base:latest"
+      r_environ = here::here("man/scaffolding/.Renviron")
     )
   )
 })
