@@ -9,7 +9,14 @@ command_shell_prep <- function(expr, rprof, renv, temp_out, temp_in, dependencie
       dependencies
     },
     if (!is.null(dependencies)) {
-      paste0("\npak::pkg_install(c('", paste0(dependencies, collapse = "', '"), "'))")
+      paste0(
+        "\ndist <- pak::system_r_platform_data()[['distribution']]",
+        "\nrel <- pak::system_r_platform_data()[['release']]",
+        "\nbinary_url <- subset(pak::ppm_platforms(), distribution == dist & release == rel)[['binary_url']][1]",
+        "\ncran_binary_url <- if (!is.na(binary_url)) { sprintf('%s/__linux__/%s/latest', pak::ppm_repo_url(), binary_url)  } else { NA }",
+        "\nif (!is.na(cran_binary_url)) { pak::repo_add(CRAN = cran_binary_url) }",
+        paste0("\npak::pkg_install(c('", paste0(dependencies, collapse = "', '"), "'))")
+      )
     } else {
       dependencies
     },
@@ -116,7 +123,7 @@ docker_command <- function(args, stdout = "", stderr = "", ...) {
 #' @param args Arguments to pass to the function. Must be a list.
 #' @param image A string in the \code{image:tag} format specifying either a local
 #'   Docker image or an image available on DockerHub. Default image is
-#'   \code{r-base:{jetty:::r_version()}} where your R version is determined from
+#'   \code{posit/r-base:{jetty:::r_version()}-noble} where your R version is determined from
 #'   your local R session.
 #' @param stdout,stderr where output to ‘stdout’ or ‘stderr’ should be sent.
 #'   Possible values are "", to the R console (the default), NULL
@@ -179,7 +186,7 @@ docker_command <- function(args, stdout = "", stderr = "", ...) {
 run <- function(
   func,
   args = list(),
-  image = paste0("r-base:", r_version()),
+  image = paste0("posit/r-base:", r_version(), "-noble"),
   stdout = "",
   stderr = "",
   install_dependencies = FALSE,
