@@ -75,15 +75,15 @@ jetty::run(function() var(iris[, 1:4]))
 The desired Docker container can be set via the `image` argument, and
 should be specified as a string in standard Docker format. These formats
 include `username/image:tag`, `username/image`, `image:tag`, and
-`image`. The default choice is `r-base:{jetty:::r_version()}` which is a
-bare-bones R image that mirrors the R version running locally. For
-example, the following command would be executed in the official
-[`r-base`](https://hub.docker.com/_/r-base) image with the latest
-version of R, which comes with no packages beyond the base set
+`image`. The default choice is `posit/r-base:{jetty:::r_version()-noble}` which is a
+minimal R image that mirrors the R version running locally. For
+example, the following command would be executed in the
+[`posit/r-base`](https://hub.docker.com/_/r-base) image with
+version 4.5.1 of R, which comes with no packages beyond the base set
 installed:
 
 ``` r
-jetty::run(function() var(iris[, 1:4]), image = "r-base:latest")
+jetty::run(function() var(iris[, 1:4]), image = "posit/r-base:4.5.1-noble")
 ```
 
 ### Passing arguments
