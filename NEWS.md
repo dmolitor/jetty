@@ -1,3 +1,8 @@
+# jetty 0.2.2
+
+* Improves `pak` setup so that, whenever possible, `pak` will install package
+binaries instead of building from source.
+
 # jetty 0.2.1
 
 * Improves error messages if the underlying Docker process throws an error.
