@@ -53,7 +53,7 @@ returned within the local R session.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">run</span><span class="op">(</span></span>
 <span>  <span class="va">func</span>,</span>
 <span>  args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  image <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"r-base:"</span>, <span class="fu">r_version</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  image <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"posit/r-base:"</span>, <span class="fu">r_version</span><span class="op">(</span><span class="op">)</span>, <span class="st">"-noble"</span><span class="op">)</span>,</span>
 <span>  stdout <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  stderr <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  install_dependencies <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -81,7 +81,7 @@ accessible.</p></dd>
 <dt id="arg-image">image<a class="anchor" aria-label="anchor" href="#arg-image"></a></dt>
 <dd><p>A string in the <code>image:tag</code> format specifying either a local
 Docker image or an image available on DockerHub. Default image is
-<code>r-base:{jetty:::r_version()}</code> where your R version is determined from
+<code>posit/r-base:{jetty:::r_version()}-noble</code> where your R version is determined from
 your local R session.</p></dd>
 
 

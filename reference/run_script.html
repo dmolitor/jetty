@@ -48,7 +48,7 @@ an R script to be executed within the context of a Docker container.</p>
 <span>  <span class="va">file</span>,</span>
 <span>  <span class="va">...</span>,</span>
 <span>  context <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">dirname</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span>,</span>
-<span>  image <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"r-base:"</span>, <span class="fu">r_version</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  image <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"posit/r-base:"</span>, <span class="fu">r_version</span><span class="op">(</span><span class="op">)</span>, <span class="st">"-noble"</span><span class="op">)</span>,</span>
 <span>  stdout <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  stderr <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  install_dependencies <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -84,7 +84,7 @@ scope of the context directory. The default value is the directory that
 <dt id="arg-image">image<a class="anchor" aria-label="anchor" href="#arg-image"></a></dt>
 <dd><p>A string in the <code>image:tag</code> format specifying either a local
 Docker image or an image available on DockerHub. Default image is
-<code>r-base:{jetty:::r_version()}</code> where your R version is determined from
+<code>posit/r-base:{jetty:::r_version()}-noble</code> where your R version is determined from
 your local R session.</p></dd>
 
 
