@@ -1,6 +1,6 @@
 test_that("jetty can find and interact with Docker", {
 
-  skip_on_cran()
+  if (!interactive()) skip()
 
   expect_type(jetty:::docker_installed(), "logical")
   expect_error(jetty:::docker_command("fail", stdout = TRUE, stderr = TRUE), class = "docker_cmd_error")
@@ -9,7 +9,7 @@ test_that("jetty can find and interact with Docker", {
 
 test_that("jetty executes commands and gets expected results", {
 
-  skip_on_cran()
+  if (!interactive()) skip()
 
   # lm test
   expect_s3_class(jetty::run({ lm(mpg ~ ., data = mtcars) }, r_profile = NULL), class = "lm")

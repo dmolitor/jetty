@@ -7,7 +7,7 @@
 run(
   func,
   args = list(),
-  image = paste0("r-base:", r_version()),
+  image = paste0("posit/r-base:", r_version(), "-noble"),
   stdout = "",
   stderr = "",
   install_dependencies = FALSE,
@@ -26,7 +26,7 @@ accessible.}
 
 \item{image}{A string in the \code{image:tag} format specifying either a local
 Docker image or an image available on DockerHub. Default image is
-\code{r-base:{jetty:::r_version()}} where your R version is determined from
+\code{posit/r-base:{jetty:::r_version()}-noble} where your R version is determined from
 your local R session.}
 
 \item{stdout, stderr}{where output to ‘stdout’ or ‘stderr’ should be sent.
